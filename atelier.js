@@ -5,8 +5,7 @@
     var achieve = 0;
     var charDefault = new Image();
     var happy = 200;
-    var
- hp = 100;
+    var hp = 100;
     var gold = 100;
     var score = 0;
     var status = "見習い錬金術士";
@@ -27,7 +26,7 @@
     }
     var key_pos = 0;
     var key_achieve = 0;
-    var quest_item;
+    var quest_item = -1;
     var quest_sum;
     var quest_num = 0;
     var exp_area = 0;
@@ -86,7 +85,9 @@
     var run = 0;
     var end_pict = [];
     var end_y = [];
-    
+    var pon = 0;
+    var heal_time = 0;
+    var unknown;
 
     var audio_drag = new Audio();
     var audio_def = new Audio();
@@ -135,8 +136,7 @@
 	
 	'効率ピッケル：採集中の行動回数が増える。',
 	'トロフィー：行動にかかる時間が２０％、最終スコアが５０％増える。',
-	'カフェイン耐性：エナジードリンク、キメ放題！',
-
+	'薬物耐性：エナジードリンク、キメ放題！',
     ];
     var ability_have = [];
     for (var i in ability)ability_have[i] = -1;
@@ -195,7 +195,7 @@
     ctx.fillRect(0,0,w,h);
 
     var end_src = [];
-    for(var i = 1; i<10; i++)end_src.push('end'+i+'.png');
+    for(var i = 1; i<10; i++)end_src.push('img/end'+i+'.png');
     var ends = [];
     for (var i in end_src) {
         ends[i] = new Image();
@@ -203,11 +203,11 @@
     }
 
     var srcs1 = [
-	'back.png',
-        'title1.png'
+	'img/back.png',
+        'img/title1.png'
     ];
-    for(var i = 1; i<19; i++)srcs1.push('char'+i+'.png');//2-20
-    for(var i = 1; i<57; i++)srcs1.push('field'+i+'.png');//21-77
+    for(var i = 1; i<19; i++)srcs1.push('img/char'+i+'.png');//2-20
+    for(var i = 1; i<57; i++)srcs1.push('img/field'+i+'.png');//21-77
     var field_name = [
 	'　鳥　居',	'　石　段',	'　石　段',	'　参　道',	'　湖　畔',
 	'　鳥　居',	'　樹　林',	'　森　林',	'　樹　道',	'　紅　葉',
@@ -222,11 +222,11 @@
 	'　閃　光',	'　調　律',	'　調　和',	'　解　放',	'　本　質',
 	'　真　実'
     ];
-    srcs1.push('char19.png');
+    srcs1.push('img/char19.png');
     var srcs2 = [];
-    for(var i = 1; i<15; i++)srcs2.push('frame'+i+'.png');
+    for(var i = 1; i<15; i++)srcs2.push('img/frame'+i+'.png');
     var srcs3 = [];
-    for(var i = 0; i<46; i++)srcs3.push('icon'+i+'.png');
+    for(var i = 0; i<46; i++)srcs3.push('img/icon'+i+'.png');
 
     var images = [];
     for (var i in srcs1) {
@@ -275,12 +275,15 @@
             loadedCount++;
         }, false);
     }
-    charDefault.src = 'char1.png';
+    charDefault.src = 'img/char1.png';
     for(var i = 0; i < 100; i++)cnt[i] = 0;
     init();
     renderTitle();
 
 function init(){
+	heal_time = 0;
+	quest_item = -1;
+	pon = 0;
 	phase = 0;
 	achieve = 0;
 	happy = 200;
@@ -351,7 +354,7 @@ function renderTitle(){
 	if(cnt[40]==0){
 		audio_def.pause();
 		audio_def.loop = true;
-		audio_def.src = "1.mp3";
+		audio_def.src = "bgm/1.mp3";
 		audio_def.currentTime = 0;
 		audio_def.play();
 	}
@@ -364,9 +367,9 @@ function renderTitle(){
 	ctx.drawImage(frames[0], 0, 0,w/2,h/2);
 	ctx.drawImage(frames[1], w/2, h/2,w/2,h/2);
 	if(on_mouse_title==1){
-	ctx.drawImage(frames[6], 370, 400,280,90);
+	ctx.drawImage(frames[6], 400, 400,280,90);
 	}else{
-	ctx.drawImage(frames[3], 370, 400,280,90);
+	ctx.drawImage(frames[3], 400, 400,280,90);
 	}
 
 	ctx.font= 'bold 25px メイリオ';
@@ -375,8 +378,8 @@ function renderTitle(){
 	ctx.lineWidth = 6; 
 	ctx.lineJoin = 'round';
 	ctx.fillStyle = '#fff';
-	ctx.strokeText('P L A Y',461,455,510);
-	ctx.fillText('P L A Y',461,455);
+	ctx.strokeText('P L A Y',491,455,510);
+	ctx.fillText('P L A Y',491,455);
 
 	ctx.globalAlpha = 1.0-0.01*cnt[0];
 	ctx.fillStyle = '#000';
@@ -395,7 +398,7 @@ function renderStory(){
 	
 	ctx.globalAlpha = 1.0-0.01*cnt[1];
 	ctx.drawImage(images[1], 220, -50,580,480);
-	ctx.drawImage(frames[2], 370, 400,280,90);
+	ctx.drawImage(frames[2], 400, 400,280,90);
 	ctx.globalAlpha = 1.0;
 
 	ctx.fillStyle = 'rgb(0,0,0)';
@@ -411,11 +414,11 @@ function renderStory(){
 
 	var pro = [
 		'私の名前は絵奈鳥。',
-		'最高のエナドリを作るため',
+		'エナドリに啓蒙されて',
 		'錬金術士を目指すも',
 		'このままでは大卒無職！',
 		'三日後の面接までに',
-		'成果物を仕上げよう！'
+		'成果物をでっち上げよう！'
 	];
 	if(achieve==0 || achieve==1 || achieve==2){
 		for(var i = 0; i < 6; i++){
@@ -687,7 +690,7 @@ function questEvent(){
 		onClickSE(16);
 		var hit = Math.floor(Math.random()*56);
 		score += 10;
-		happy /= 10;
+		if(happy<201)happy /= 10;
 		if(happy<1)happy=0;
 		charDefault = images[8];
 		if(hit<exp_area){
@@ -706,14 +709,26 @@ function questEvent(){
 	case  7 : 
 		var n = Math.floor(Math.random()*21);
 		if(key_achieve<2 && n>8){
-			exp_str[0] = '何も無かった。';
+			if(happy<201){
+				exp_str[0] = '何も無かった。';
+			}else{
+				onClickSE(17);
+				charDefault = images[9];
+				exp_str[0] = 'ほのかな幸せを感じた。';
+			}
 		}else{
 			if(key_item_know[Math.floor(n/3)][n%3]==-1){
 				onClickSE(9);
 				key_item_know[Math.floor(n/3)][n%3] = 0;
 				exp_str[0] = '錬成のヒントを得た！';
 			}else{
-				exp_str[0] = '何も無かった。';
+				if(happy<201){
+					exp_str[0] = '何も無かった。';
+				}else{
+					onClickSE(17);
+					charDefault = images[9];
+					exp_str[0] = 'ほのかな幸せを感じた。';
+				}
 			}
 		}
 		break;
@@ -723,7 +738,7 @@ function questEvent(){
 		var v = Math.floor(Math.random()*(2+item_eff[15]));
 		if(v==0){
 			onClickSE(20);
-			if(happy<100){hp = 0; happy = 0;}else if(happy<300){happy -= 100;}
+			if(happy<100){hp = 0; happy = 0;}else if(happy<201){happy -= 100;}
 			exp_str[0] = '祈　ら　れ　た　！　';
 		}else{
 			if(item_eff[15]==1){
@@ -780,7 +795,13 @@ function questEvent(){
 			gold += g;
 			exp_str[0] = 'お賽銭を拾った。'+g+'ゴールド獲得。';
 		}else{
-			exp_str[0] = '何も無かった。';
+			if(happy<201){
+				exp_str[0] = '何も無かった。';
+			}else{
+				onClickSE(17);
+				charDefault = images[9];
+				exp_str[0] = 'ほのかな幸せを感じた。';
+			}
 		}
 		break;
 	case 11 : 
@@ -793,7 +814,13 @@ function questEvent(){
 			item_stack[0]+=n;
 			exp_str[0] = item[0]+'を'+n+'個手に入れた。';
 		}else{
-			exp_str[0] = '何も無かった。';
+			if(happy<201){
+				exp_str[0] = '何も無かった。';
+			}else{
+				onClickSE(17);
+				charDefault = images[9];
+				exp_str[0] = 'ほのかな幸せを感じた。';
+			}
 		}
 		break;
 	case 12 : 
@@ -806,7 +833,13 @@ function questEvent(){
 			item_stack[1]+=n;
 			exp_str[0] = item[1]+'を'+n+'個手に入れた。';
 		}else{
-			exp_str[0] = '何も無かった。';
+			if(happy<201){
+				exp_str[0] = '何も無かった。';
+			}else{
+				onClickSE(17);
+				charDefault = images[9];
+				exp_str[0] = 'ほのかな幸せを感じた。';
+			}
 		}
 		break;
 	case 13 : 
@@ -830,7 +863,13 @@ function questEvent(){
 				exp_str[0] = item[19]+'を'+n+'個手に入れた。';
 			}
 		}else{
-			exp_str[0] = '何も無かった。';
+			if(happy<201){
+				exp_str[0] = '何も無かった。';
+			}else{
+				onClickSE(17);
+				charDefault = images[9];
+				exp_str[0] = 'ほのかな幸せを感じた。';
+			}
 		}
 		break;
 	case 14 : 
@@ -844,20 +883,50 @@ function questEvent(){
 			cnt[96]+=n;
 			exp_str[0] = '時空が歪んでいる。';
 		}else{
-			exp_str[0] = '何も無かった。';
+			if(happy<201){
+				exp_str[0] = '何も無かった。';
+			}else{
+				onClickSE(17);
+				charDefault = images[9];
+				exp_str[0] = 'ほのかな幸せを感じた。';
+			}
 		}
 		break;
 	case 15 : quest_chance++;
-		exp_str[0] = '何も無かった。';
+		if(happy<201){
+			exp_str[0] = '何も無かった。';
+		}else{
+			onClickSE(17);
+			charDefault = images[9];
+			exp_str[0] = 'ほのかな幸せを感じた。';
+		}
 		break;
 	case 16 :quest_chance++;
-		exp_str[0] = '何も無かった。';
+		if(happy<201){
+			exp_str[0] = '何も無かった。';
+		}else{
+			onClickSE(17);
+			charDefault = images[9];
+			exp_str[0] = 'ほのかな幸せを感じた。';
+		}
 		break;
 	case 17 : quest_chance++;
-		exp_str[0] = '何も無かった。';
+		if(happy<201){
+			exp_str[0] = '何も無かった。';
+		}else{
+			onClickSE(17);
+			charDefault = images[9];
+			exp_str[0] = 'ほのかな幸せを感じた。';
+		}
 		break;
 	case 18 : quest_chance++;
-		exp_str[0] = '何も無かった。';
+		if(happy<201){
+			exp_str[0] = '何も無かった。';
+		}else{
+			onClickSE(17);
+			charDefault = images[9];
+			exp_str[0] = 'ほのかな幸せを感じた。';
+		}
 		break;
 	case 19 : 
 		if((key_achieve<3 && quest_item!=-1 && quest_item<20) || (exp_area>51 && quest_item!=-1)){
@@ -867,7 +936,13 @@ function questEvent(){
 			exp_str[0] = item[quest_item]+'を手に入れた。';
 		}else{
 			quest_chance++;
-			exp_str[0] = '何も無かった。';
+			if(happy<201){
+				exp_str[0] = '何も無かった。';
+			}else{
+				onClickSE(17);
+				charDefault = images[9];
+				exp_str[0] = 'ほのかな幸せを感じた。';
+			}
 		}
 		break;
 
@@ -943,8 +1018,8 @@ function poly(){
 						key_item[i] = 0;
 						alc_item[3] = key_ability[i];
 						key_achieve++;
-						if(key_achieve==3)status = "そこそこ錬金術士";
-						if(key_achieve==7)status = "普通に錬金術士";
+						if(key_achieve==3 && !status.match(/錬成/))status = "そこそこ錬金術士";
+						if(key_achieve==7 && !status.match(/錬成/))status = "普通に錬金術士";
 						break;
 					}
 				}
@@ -1098,12 +1173,35 @@ function sell(){
 	}
 }
 function heal(){
-	var time = 1;
+	var c = true;
+	heal_time++;
 	if(ability_have[12]!=-1){
-		if(key_item[ability_have[12]]!=-1)time=1.2;
+		if(key_item[ability_have[12]]!=-1)cnt[92]+=0.2;
 	}
-	cnt[92]+=time;
-	modTime();
+	if(ability_have[3]!=-1){
+		if(key_item[ability_have[3]]!=-1){
+			if(heal_time%2==0){
+				cnt[92]++;
+				heal_time = 0;
+				modTime();
+			}
+			c = false;
+		}
+	}else if(ability_have[9]!=-1){
+		if(key_item[ability_have[9]]!=-1 && hp<20){
+			if(heal_time%5==0){
+				cnt[92]++;
+				heal_time = 0;
+				modTime();
+			}
+			c = false;
+		}
+	}
+	if(c){
+		cnt[92] += heal_time;
+		heal_time = 0;
+		modTime();
+	}
 	if(hp<100)hp++;
 	if(happy<200)happy++;
 	if(happy<200)happy++;
@@ -1150,6 +1248,8 @@ function modTime(){
 	}else if(ability_have[9]!=-1){
 		if(key_item[ability_have[9]]!=-1 && hp<20)cnt[92]-=4;
 	}
+	if(happy>200)cnt[92]-=use_taima;
+	if(cnt[92]<-1)cnt[92]=0;
 	if(cnt[92]>0){requestAnimationFrame(modTime);} 
 }
 function appTime(){
@@ -1555,9 +1655,9 @@ function renderMain(){
 		ctx.drawImage(icons[27],275,220,164,164);
 	}
 	ctx.font= 'bold 20px HG明朝E';
-	t = 'エナドリ所持数：'+have_taima;
-	ctx.strokeText(t,270-(t.length-8)*4,408,510);
-	ctx.fillText(t,270-(t.length-8)*4,408);
+	t = 'エナドリの所持数：'+have_taima;
+	ctx.strokeText(t,270-(t.length-8)*4,405,510);
+	ctx.fillText(t,270-(t.length-8)*4,405);
 
 	ctx.globalAlpha = 1.0;
 
@@ -2088,8 +2188,8 @@ function renderAlchemy2(){
 		ctx.strokeStyle = '#333';
 		ctx.fillStyle = '#fff';
 		ctx.lineWidth = 4;
-		ctx.strokeText('エナドリ錬成！',570,400+m+cnt[30]/2,510);
-		ctx.fillText('エナドリ錬成！',570,400+m+cnt[30]/2);
+		ctx.strokeText('エナドリを錬成！',570,400+m+cnt[30]/2,510);
+		ctx.fillText('エナドリを錬成！',570,400+m+cnt[30]/2);
 		ctx.globalAlpha = 1.0;
 	}
 	if(cnt[30]>0)cnt[30]--;
@@ -2184,7 +2284,7 @@ function renderQuest2(){
 	ctx.drawImage(charDefault, 0, 0);
 	ctx.drawImage(frames[0], 0, 0,w/2,h/2);
 	ctx.drawImage(frames[1], w/2, h/2,w/2,h/2);
-	ctx.drawImage(images[76],860-3*cnt[5],0);
+	ctx.drawImage(images[76],800-3*cnt[5],100);
 	//ctx.drawImage(images[2],880-3*cnt[5],0);
 	ctx.fillStyle = '#000';
 	ctx.fillRect(0,0,w,60);
@@ -2209,7 +2309,6 @@ function renderQuest2(){
 			if(cnt[6]<10){
 				cnt[6]++;
 				ctx.globalAlpha = 0.1*cnt[6];
-				console.log(quest_num);
 				if(key_achieve<2 && quest_num>18){
 					ctx.fillText('依頼は無いよ',610-3*cnt[5],205+10-cnt[6]);
 				}else{
@@ -2248,24 +2347,35 @@ function renderQuest2(){
 					ctx.fillText('ありがとう！',610-3*cnt[5],180);
 				}
 			}else{
-				if(cnt[6]<60)cnt[6]++;
 				var num = (quest_num/2 -1)%21 +1;
 				var num1 = Math.floor((num-1)/3);
 				var num2 = (num-1)%3;
-				key_item_know[num1][num2] = 0;
+				if(cnt[6]==50){
+					unknown = true;
+					if(key_item_know[num1][num2]==0){
+						unknown = false;
+						if(quest_num>18){
+							item_stack[20]+=9;
+						}else{
+							item_stack[20]+=num1*3+num2+1;
+						}
+					}else{
+						key_item_know[num1][num2] = 0;
+					}
+				}
+				if(cnt[6]<60)cnt[6]++;
 				if(cnt[6]<60){
 					ctx.globalAlpha = 0.1*(cnt[6]-50);
-					if(quest_num<44){
+					if(quest_num<44 && unknown){
 						ctx.fillText('key'+num+'は',610-3*cnt[5],180+60-cnt[6]);
 						ctx.drawImage(icons[key_item_recipe[num1][num2]],720-3*cnt[5],130+60-cnt[6],64,64);
 					}else{
-						item_stack[20]++;
 						ctx.fillText('お礼は',610-3*cnt[5],180+60-cnt[6]);
 						ctx.drawImage(icons[20],720-3*cnt[5],130+60-cnt[6],64,64);
 					}
 					ctx.globalAlpha = 1.0;
 				}else{
-					if(quest_num<44){
+					if(quest_num<44 && unknown){
 						ctx.fillText('key'+num+'は',610-3*cnt[5],180);
 						ctx.drawImage(icons[key_item_recipe[num1][num2]],720-3*cnt[5],130,64,64);
 					}else{
@@ -2327,8 +2437,8 @@ function renderEnding(){
 		//audio_def.playbackRate = 0.96;
 		//audio_def.loop = false;
 		if(music_next!=12)audioChange(12);
-		if(cnt[20]==0)status = "真実の錬金術士";
-		if(ending_num==5 && exp_area==55)status = "地方上級錬金術士";
+		if(cnt[20]==0 && !status.match(/イカサマ/))status = "真実の錬金術士";
+		if(ending_num==5 && exp_area==55 && !status.match(/イカサマ/))status = "地方上級錬金術士";
 	}
 	if(!click_wait && !click_wait2)cnt[6]++;
 	ctx.globalAlpha = 0.01*cnt[6];
@@ -2373,8 +2483,8 @@ function renderEnding2(){
 	}else if(ending_num==2){
 		//薬中
 		str.push('ＧＡＭＥ　ＯＶＥＲ');
-		str.push('人の道を捨てエナドリに');
-		str.push('全てを捧げた絵奈鳥は');
+		str.push('人の道を捨て');
+		str.push('エナドリに全てを捧げた絵奈鳥は');
 		str.push('それはそれで');
 		str.push('幸せだったのかも知れない。');
 		str.push('score '+score+' To be continued.');
@@ -2430,6 +2540,7 @@ function renderEnding2(){
 				end_pict[i] = i+20;
 				end_y[i] = 600+i*160;
 			}
+			if(status.match(/イカサマ/))status = "周回の錬金術士";
 			requestId = window.requestAnimationFrame(renderEnding3); 
 		}else{
 			if(ending_num!=4 && ending_num!=5)status = "周回の錬金術士";
@@ -2500,7 +2611,7 @@ function autoMove(){
 function onClickSE(n){
 	if(!music_mute && music_play==0){
 		if(n==1 || n==2 || n==4 || n==10 || n==13 || n==17 || n==18 || n==20 || n==21 || n==22){audio_se.volume = 0.5;}else{audio_se.volume = 1.0;}
-		audio_se.src = "se"+n+".mp3";
+		audio_se.src = "se/se"+n+".mp3";
 		audio_se.play();
 	}
 }
@@ -2525,7 +2636,7 @@ function audioChange2(){
 		cnt[41]++;
 		audio_def.pause();
 		audio_def.volume = 0;
-		audio_def.src = music_next+".mp3";
+		audio_def.src = "bgm/"+music_next+".mp3";
 		audio_def.currentTime = 0;
 		audio_def.play();
 	}
@@ -2554,13 +2665,17 @@ if(!click_mute){
 	if(70<x && x<180 && 90<y && y<150){
 		onClickSE(3);
 		charDefault = images[9];
-		for(var i in key_item)key_item[i] = 0;
-		key_achieve = 7;
+		pon++;
+		if(pon>20){
+		key_achieve=7;
+		for(var i in key_item)key_item[i]=0;
+		status = "イカサマ錬金術士";
+		}
 	}
 	if(90<x && x<180 && 300<y && y<370){
 		onClickSE(22);
 		charDefault = images[8];
-		status = "セクハラ錬金術士";
+		if(!status.match(/イカサマ/))status = "セクハラ錬金術士";
 	}
 	if(phase==0){
 		if(50<x && x<200 && 555<y && y<600){
@@ -2666,7 +2781,7 @@ if(!click_mute){
 		//エナドリ使用
 		if(240<x && x<475 && 210<y && y<420){
 			if(have_taima>0){
-				status = "エナドリ錬金術士";
+				if(!status.match(/イカサマ/))status = "エナドリの錬金術士";
 				on_drag = true;
 
 				var time = Math.floor(20*(1-0.01*use_taima));
@@ -2688,7 +2803,7 @@ if(!click_mute){
 				music_play++;
 				audio_drag.pause();
 				//audio_drag.loop = true;
-				audio_drag.src = "d.mp3";
+				audio_drag.src = "bgm/d.mp3";
 				audio_drag.currentTime = 72.5;
 				audio_drag.play();
 				}
@@ -2803,7 +2918,7 @@ if(!click_mute){
 				if(music_next!=10 && music_next!=11)audioChange(10);
 			}else if(area==55){
 				if(music_next!=11)audioChange(11);
-				if(cnt[20]==0)status = "真実の錬金術士";
+				if(cnt[20]==0 && !status.match(/イカサマ/))status = "真実の錬金術士";
 			}
 			}
 			onClickSE(5);
@@ -2984,10 +3099,10 @@ if(!click_mute){
 			if(hp!=0 && (exp_str[0] == '疲れたから、もう帰る。' || (0<x && x<800 && 0<y && y<60) || (0<x && x<800 && 520<y && y<600))){
 				if((0<x && x<800 && 0<y && y<60) || (0<x && x<800 && 520<y && y<600)){
 					run++;
-					if(run>0)status = "Ｂ級バックラー";
-					if(run>5)status = "Ａ級バックラー";
-					if(run>9)status = "Ｓ級バックラー";
-					if(run>20)status = "バックレ錬金術士";
+					if(run>0 && !status.match(/イカサマ/))status = "Ｂ級バックラー";
+					if(run>5 && !status.match(/イカサマ/))status = "Ａ級バックラー";
+					if(run>9 && !status.match(/イカサマ/))status = "Ｓ級バックラー";
+					if(run>20 && !status.match(/イカサマ/))status = "バックレ錬金術士";
 				}
 				if(item_eff[6]==1)item_eff[6] = 0;
 				if(item_eff[16]==1)item_eff[16] = 0;
@@ -3025,8 +3140,8 @@ function onMove(e){
 				on_mouse_help = 'マトモな成果物を生み出して、面接を乗り越えよう。';
 			}
 		}
-		if(80<x && x<280 && 40<y && y<50)on_mouse_help = '幸福度メーター：絵奈鳥の精神状態を表している。幸福度が尽きるとゲームオーバー。';
-		if(25<x && x<135 && 540<y && y<590)on_mouse_help = '残り時間：面接までの残り時間。成果物を仕上げないと祈られてゲームオーバー。';
+		if(80<x && x<280 && 40<y && y<50)on_mouse_help = '幸福度メーター：絵奈鳥の精神状態を表している。幸福度が尽きると死ぬ。';
+		if(25<x && x<135 && 540<y && y<590)on_mouse_help = '残り時間：面接までの残り時間。成果物を仕上げないと祈られて死ぬ。';
 
 		if(pict==0){
 			if(240<x && x<475 && 210<y && y<420){
@@ -3034,7 +3149,7 @@ function onMove(e){
 					drag = 1;
 					charDefault = images[4];
 				}
-				on_mouse_help = 'エナジードリンク：飲むとゴキゲンになる。【総数：'+cnt_taima+'】';
+				on_mouse_help = '不思議なエナドリ：飲むと気持ち良くなる不思議なエナドリ【総数：'+cnt_taima+'】';
 			}else{
 				if(drag==1){
 					drag = 0;
@@ -3099,7 +3214,7 @@ function onMove(e){
 				on_mouse_help = str.substring(0, str.indexOf("："))+'を錬成した！';
 			}else{
 				on_click_alc = -1;
-				on_mouse_help = 'エナジードリンクを錬成した！';
+				on_mouse_help = 'エナドリ錬成した！';
 			}
 		}else{
 			alc_item[3] = -1;
