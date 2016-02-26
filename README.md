@@ -1,6 +1,8 @@
-# atelier
-<<<<<<< HEAD
-JavaScript / html5 による資材集めゲーム
-=======
-【JavaScript / HTML5】素材集めゲーム
->>>>>>> abb9e59028f7ab7461acef11418d81ebcb755543
+﻿# atelier
+
+---
+
+素材を集めて成果物を錬成し、内定をもらうゲームです。
+
+
+![タイトル画面](1.png)
