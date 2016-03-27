@@ -1,9 +1,9 @@
-﻿(function() {
+(function() {
 	var w = 800, h = 600;
 	var cnt = [];
 	var phase = 0;
 	var achieve = 0;
-	var charDefault = new Image();
+	var charDefault;
 	var happy = 200;
 	var hp = 100;
 	var gold = 100;
@@ -88,6 +88,7 @@
 	var pon = 0;
 	var heal_time = 0;
 	var unknown;
+	var back = 55;
 
 	var audio_drag = new Audio();
 	var audio_def = new Audio();
@@ -193,21 +194,36 @@
 		
 	ctx.fillStyle = '#000';
 	ctx.fillRect(0,0,w,h);
+	var chars = new Image();
+	chars.src = 'img/char.png';
 
-	var end_src = [];
-	for(var i = 1; i<10; i++)end_src.push('img/end'+i+'.png');
-	var ends = [];
-	for (var i in end_src) {
-		ends[i] = new Image();
-		ends[i].src = end_src[i];
-	}
+	var fields = new Image();
+	fields.src = 'img/field.jpg';
 
-	var srcs1 = [
-		'img/back.png',
-	'img/title1.png'
-	];
-	for(var i = 1; i<19; i++)srcs1.push('img/char'+i+'.png');//2-20
-	for(var i = 1; i<57; i++)srcs1.push('img/field'+i+'.png');//21-77
+	var ends = new Image();
+	ends.src = 'img/end.png';
+
+	var frames = new Image();
+	frames.src = 'img/frame.png';
+
+	var icons = new Image();
+	icons.src = 'img/icon.png';
+
+	var pop = new Image();
+	pop.src = 'img/pop.png';
+	
+	var hand = new Image();
+	hand.src = 'img/hand.png';
+
+	var deco1 = new Image();
+	deco1.src = 'img/deco1.png';
+
+	var deco2 = new Image();
+	deco2.src = 'img/deco2.png';
+
+	var logo = new Image();
+	logo.src = 'img/logo.png';
+
 	var field_name = [
 		'　鳥　居',	'　石　段',	'　石　段',	'　参　道',	'　湖　畔',
 		'　鳥　居',	'　樹　林',	'　森　林',	'　樹　道',	'　紅　葉',
@@ -222,62 +238,7 @@
 		'　閃　光',	'　調　律',	'　調　和',	'　解　放',	'　本　質',
 		'　真　実'
 	];
-	srcs1.push('img/char19.png');
-	var srcs2 = [];
-	for(var i = 1; i<15; i++)srcs2.push('img/frame'+i+'.png');
-	var srcs3 = [];
-	for(var i = 0; i<46; i++)srcs3.push('img/icon'+i+'.png');
 
-	var images = [];
-	for (var i in srcs1) {
-		images[i] = new Image();
-		images[i].src = srcs1[i];
-	}
-	var frames = [];
-	for (var i in srcs2) {
-		frames[i] = new Image();
-		frames[i].src = srcs2[i];
-	}
-	var icons = [];
-	for (var i in srcs3) {
-		icons[i] = new Image();
-		icons[i].src = srcs3[i];
-	}
-
-	var loadedCount = 1;
-	/*
-	for (var i in images) {
-		images[i].addEventListener('load', function() {
-			if (loadedCount == images.length) {
-				for (var j in images) {
-							//if(j==0)ctx.drawImage(images[j], 0, 0, w, h);
-				}
-			}
-			loadedCount++;
-		}, false);
-	}
-	for (var i in frames) {
-		frames[i].addEventListener('load', function() {
-			if (loadedCount == frames.length) {
-				for (var j in frames) {
-					//if(j==0)ctx.drawImage(frames[j], 0, 0, w, h);
-				}
-			}
-			loadedCount++;
-		}, false);
-	}
-	for (var i in icons) {
-		icons[i].addEventListener('load', function() {
-			if (loadedCount == icons.length) {
-				for (var j in icons) {
-					//if(j==0)ctx.drawImage(icons[j], 0, 0, w, h);
-				}
-			}
-			loadedCount++;
-		}, false);
-	}
-	*/
-	charDefault.src = 'img/char1.png';
 	for(var i = 0; i < 100; i++)cnt[i] = 0;
 	init();
 	renderTitle();
@@ -299,7 +260,6 @@
 			key_ability[i] = -1;
 			key_item_recipe[i] = [-1,-1,-1];
 			key_item_know[i] = [-1,-1,-1];
-			//key_item_know[i] = [0,0,0];
 			key_item_help[i] = '';
 		}
 		key_pos = 0;
@@ -348,7 +308,8 @@
 			item_eff[i] = 0;
 		}
 		item_stack[20]+=3;
-		charDefault = images[2];
+		//charDefault = images[2];
+		charDefault = 0;
 		for(var i = 0; i < 100; i++)cnt[i] = 0;
 	}
 
@@ -362,16 +323,15 @@
 		}
 		audio_def.volume = 0.01*cnt[40];
 		if(cnt[40]<30)cnt[40]++;
-
-		ctx.drawImage(images[0], 0, 0, w, h);
-		ctx.drawImage(images[1], 220, -50,580,480);
-		ctx.drawImage(charDefault, 0-cnt[99], 0);
-		ctx.drawImage(frames[0], 0, 0,w/2,h/2);
-		ctx.drawImage(frames[1], w/2, h/2,w/2,h/2);
+		ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, 800, 600, 0, 0, w, h);//back
+		ctx.drawImage(logo, 220, -50,580,480);//logo
+		ctx.drawImage(chars, charDefault*225, 0, 225, 600, 0-cnt[99], 0, 225, 600);//chara
+		ctx.drawImage(deco1, 0, 0,w/2,h/2);
+		ctx.drawImage(deco2, w/2, h/2,w/2,h/2);
 		if(on_mouse_title==1){
-		ctx.drawImage(frames[6], 400, 400,280,90);
+			ctx.drawImage(frames, 0, 720, 400, 180, 400, 400, 280, 90);
 		}else{
-		ctx.drawImage(frames[3], 400, 400,280,90);
+			ctx.drawImage(frames, 0, 180, 400, 180, 400, 400, 280, 90);
 		}
 
 		ctx.font= 'bold 25px メイリオ';
@@ -389,18 +349,18 @@
 		ctx.globalAlpha = 1.0;
 		if(cnt[0]<100)cnt[0] += 1;
 		if(cnt[99]>0)cnt[99] -= 1;
-		if(cnt[99]==2)charDefault = images[8];
+		if(cnt[99]==2)charDefault = 6;
 		requestId = window.requestAnimationFrame(renderTitle); 
 	}
 	function renderStory(){
-		ctx.drawImage(images[0], 0, 0, w, h);
-		ctx.drawImage(charDefault, 0, 0);
-		ctx.drawImage(frames[0], 0, 0,w/2,h/2);
-		ctx.drawImage(frames[1], w/2, h/2,w/2,h/2);
-		
+		ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, 800, 600, 0, 0, w, h);//back
+		ctx.drawImage(chars, charDefault*225, 0, 225, 600, 0, 0, 225, 600);//chara
+		ctx.drawImage(deco1, 0, 0,w/2,h/2);
+		ctx.drawImage(deco2, w/2, h/2,w/2,h/2);
+
 		ctx.globalAlpha = 1.0-0.01*cnt[1];
-		ctx.drawImage(images[1], 220, -50,580,480);
-		ctx.drawImage(frames[2], 400, 400,280,90);
+		ctx.drawImage(logo, 220, -50,580,480);//logo
+		ctx.drawImage(frames, 0, 0, 400, 180, 400, 400, 280, 90);
 		ctx.globalAlpha = 1.0;
 
 		ctx.fillStyle = 'rgb(0,0,0)';
@@ -587,7 +547,7 @@
 					}
 				}
 				if(hp==0 || happy==0){
-					charDefault = images[8];
+					charDefault = 6;
 					for(var i = 14; i>0; i--)exp_str[i] = exp_str[i-1];
 					exp_str[0] = '死んでしまった……！'
 				}
@@ -630,7 +590,7 @@
 			score += 10;
 			happy -= dmg;
 			if(happy<1)happy=0;
-			charDefault = images[8];
+			charDefault = 6;
 			exp_str[0] = '転んだ！　絵奈鳥に'+dmg+'ダメージ。';
 			break;
 		case  2 : 
@@ -642,7 +602,7 @@
 				happy += g/10;
 				if(happy>200)happy = 200;
 			}
-			charDefault = images[4];
+			charDefault = 2;
 			exp_str[0] = 'お金を拾った。'+g+'ゴールド獲得。';
 			break;
 		case  3 : 
@@ -667,7 +627,7 @@
 				happy += Math.floor((200-happy)*0.3)+1;
 				if(happy>200)happy = 200;
 			}
-			charDefault = images[9];
+			charDefault = 7;
 			exp_str[0] = 'ほのかな幸せを感じた。';
 			break;
 		case  6 : 
@@ -676,7 +636,7 @@
 			score += 10;
 			if(happy<201)happy /= 10;
 			if(happy<1)happy=0;
-			charDefault = images[8];
+			charDefault = 6;
 			if(hit<exp_area){
 				var dmg = Math.floor(Math.random()*40+30);
 				if(ability_have[2]!=-1){
@@ -697,7 +657,7 @@
 					exp_str[0] = '何も無かった。';
 				}else{
 					onClickSE(17);
-					charDefault = images[9];
+					charDefault = 7;
 					exp_str[0] = 'ほのかな幸せを感じた。';
 				}
 			}else{
@@ -710,7 +670,7 @@
 						exp_str[0] = '何も無かった。';
 					}else{
 						onClickSE(17);
-						charDefault = images[9];
+						charDefault = 7;
 						exp_str[0] = 'ほのかな幸せを感じた。';
 					}
 				}
@@ -783,7 +743,7 @@
 					exp_str[0] = '何も無かった。';
 				}else{
 					onClickSE(17);
-					charDefault = images[9];
+					charDefault = 7;
 					exp_str[0] = 'ほのかな幸せを感じた。';
 				}
 			}
@@ -802,7 +762,7 @@
 					exp_str[0] = '何も無かった。';
 				}else{
 					onClickSE(17);
-					charDefault = images[9];
+					charDefault = 7;
 					exp_str[0] = 'ほのかな幸せを感じた。';
 				}
 			}
@@ -821,7 +781,7 @@
 					exp_str[0] = '何も無かった。';
 				}else{
 					onClickSE(17);
-					charDefault = images[9];
+					charDefault = 7;
 					exp_str[0] = 'ほのかな幸せを感じた。';
 				}
 			}
@@ -851,7 +811,7 @@
 					exp_str[0] = '何も無かった。';
 				}else{
 					onClickSE(17);
-					charDefault = images[9];
+					charDefault = 7;
 					exp_str[0] = 'ほのかな幸せを感じた。';
 				}
 			}
@@ -871,7 +831,7 @@
 					exp_str[0] = '何も無かった。';
 				}else{
 					onClickSE(17);
-					charDefault = images[9];
+					charDefault = 7;
 					exp_str[0] = 'ほのかな幸せを感じた。';
 				}
 			}
@@ -881,7 +841,7 @@
 				exp_str[0] = '何も無かった。';
 			}else{
 				onClickSE(17);
-				charDefault = images[9];
+				charDefault = 7;
 				exp_str[0] = 'ほのかな幸せを感じた。';
 			}
 			break;
@@ -890,7 +850,7 @@
 				exp_str[0] = '何も無かった。';
 			}else{
 				onClickSE(17);
-				charDefault = images[9];
+				charDefault = 7;
 				exp_str[0] = 'ほのかな幸せを感じた。';
 			}
 			break;
@@ -899,7 +859,7 @@
 				exp_str[0] = '何も無かった。';
 			}else{
 				onClickSE(17);
-				charDefault = images[9];
+				charDefault = 7;
 				exp_str[0] = 'ほのかな幸せを感じた。';
 			}
 			break;
@@ -908,7 +868,7 @@
 				exp_str[0] = '何も無かった。';
 			}else{
 				onClickSE(17);
-				charDefault = images[9];
+				charDefault = 7;
 				exp_str[0] = 'ほのかな幸せを感じた。';
 			}
 			break;
@@ -924,7 +884,7 @@
 					exp_str[0] = '何も無かった。';
 				}else{
 					onClickSE(17);
-					charDefault = images[9];
+					charDefault = 7;
 					exp_str[0] = 'ほのかな幸せを感じた。';
 				}
 			}
@@ -951,7 +911,7 @@
 			}
 		}
 		if(hp==0 || happy==0){
-			charDefault = images[8];
+			charDefault = 6;
 			for(var i = 14; i>0; i--)exp_str[i] = exp_str[i-1];
 			if(hp==0){
 				exp_str[0] = '死んでしまった……！'
@@ -1204,8 +1164,8 @@
 		var pos_cnt = 0;
 		for(var i in item_eff){
 			if(item_eff[i]==1){
-				ctx.drawImage(frames[10], 10+(pos_cnt%5)*38, 490-Math.floor(pos_cnt/5)*38, 32, 32);
-				ctx.drawImage(icons[i], 10+(pos_cnt%5)*38, 490-Math.floor(pos_cnt/5)*38, 32, 32);
+				ctx.drawImage(frames, 400, 472, 200, 200, 10+(pos_cnt%5)*38, 490-Math.floor(pos_cnt/5)*38, 32, 32);
+				ctx.drawImage(icons, (i%6)*64, Math.floor(i/6)*64, 64, 64, 10+(pos_cnt%5)*38, 490-Math.floor(pos_cnt/5)*38, 32, 32);
 				pos_cnt++;
 			}
 		}
@@ -1291,12 +1251,12 @@
 		if(on_mouse_help.match(/合成レシピ/)){
 			var num = on_mouse_help.charAt(5) -1;
 			for(var i = 0; i<3; i++){
+				ctx.drawImage(frames, 400, 472, 200, 200, 360+i*58, 550, 32, 32);
 				if(key_item_know[num][i]!=-1){
-					ctx.drawImage(frames[10], 360+i*58, 550, 32, 32);
-					ctx.drawImage(icons[key_item_recipe[num][i]], 360+i*58, 550, 32, 32);
+					var inum = key_item_recipe[num][i];
+					ctx.drawImage(icons, (inum%6)*64, Math.floor(inum/6)*64, 64, 64, 360+i*58, 550, 32, 32);
 				}else{
-					ctx.drawImage(frames[10], 360+i*58, 550, 32, 32);
-					ctx.drawImage(icons[25], 360+i*58, 550, 32, 32);
+					ctx.drawImage(icons, 192, 384, 64, 64, 360+i*58, 550, 32, 32);
 				}
 			}
 			var pos = 50;
@@ -1307,17 +1267,21 @@
 		}
 
 		if(!music_mute){
-			ctx.drawImage(icons[30], 750, 550, 32, 32);
+			ctx.drawImage(icons, 256, 384, 64, 64, 750, 550, 32, 32);
 		}else{
-			ctx.drawImage(icons[31], 750, 550, 32, 32);
+			ctx.drawImage(icons, 320, 384, 64, 64, 750, 550, 32, 32);//mute
 		}
 	}
 	function appFrame(){
-		ctx.drawImage(images[0], 0, 0, w, h);
-		if(on_drag && happy>720)ctx.drawImage(images[0], -(cnt[22]+cnt[21])/4, -(cnt[22]+cnt[21])/4, w + (cnt[22]+cnt[21])/2, h + (cnt[22]+cnt[21])/2);
-		ctx.drawImage(charDefault, 0, 0);
-		ctx.drawImage(frames[0], 0, 0,w/2,h/2);
-		ctx.drawImage(frames[1], w/2, h/2,w/2,h/2);
+		if(on_drag && happy>720){
+			ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, 800, 600, -(cnt[22]+cnt[21])/4, -(cnt[22]+cnt[21])/4, w + (cnt[22]+cnt[21])/2, h + (cnt[22]+cnt[21])/2);
+		}else{
+			ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, 800, 600, 0, 0, w, h);//back
+		}
+		ctx.drawImage(chars, charDefault*225, 0, 225, 600, 0, 0, 225, 600);//chara
+		ctx.drawImage(deco1, 0, 0,w/2,h/2);
+		ctx.drawImage(deco2, w/2, h/2,w/2,h/2);
+
 		ctx.fillStyle = '#000';
 		ctx.fillRect(0,0,w,60);
 		ctx.fillRect(0,530,w,h);
@@ -1347,7 +1311,7 @@
 		ctx.fillRect(80,40,happy,10);
 	}
 	function appStatus(){
-		ctx.drawImage(icons[26], 15, 5, 50, 50);
+		ctx.drawImage(frames, 400, 672, 64, 64, 15, 5, 50, 50);//clown
 		ctx.font= '18px メイリオ';
 		ctx.strokeStyle = '#999';
 		ctx.lineWidth = 2;
@@ -1444,7 +1408,7 @@
 		audio_drag.volume = 0.007*cnt[20];
 		if(cnt[20]<30){audio_def.volume = 0.3-0.01*cnt[20];}else{audio_def.volume = 0;}
 		ctx.globalAlpha = 0.01*cnt[20];
-		ctx.drawImage(frames[13], 0, 350-cnt[21]+cnt[22]-use_taima*3);
+		ctx.drawImage(hand, 0, 350-cnt[21]+cnt[22]-use_taima*3);//hand
 		
 		if(cnt[21]<100){
 			cnt[21]+=20;
@@ -1505,21 +1469,24 @@
 	}
 
 	function renderMain(){
-		ctx.drawImage(images[0], 0, 0, w, h);
-		if(on_drag && happy>720)ctx.drawImage(images[0], -(cnt[22]+cnt[21])/4, -(cnt[22]+cnt[21])/4, w + (cnt[22]+cnt[21])/2, h + (cnt[22]+cnt[21])/2);
-		ctx.drawImage(charDefault, 0, 0);
+		if(on_drag && happy>720){
+			ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, 800, 600, -(cnt[22]+cnt[21])/4, -(cnt[22]+cnt[21])/4, w + (cnt[22]+cnt[21])/2, h + (cnt[22]+cnt[21])/2);
+		}else{
+			ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, 800, 600, 0, 0, w, h);//back
+		}
+		ctx.drawImage(chars, charDefault*225, 0, 225, 600, 0-cnt[99], 0, 225, 600);//chara
 
 		ctx.globalAlpha = 0.01*cnt[1];
 		for(var i = 0; i<3; i++){
 			if(on_mouse_main == i){
-				ctx.drawImage(frames[4], 480,  80+i*100, 300, 100);
+				ctx.drawImage(frames, 0, 360, 400, 180, 480, 80+i*100, 300, 100);
 			}else{
-				ctx.drawImage(frames[5], 480,  80+i*100, 300, 100);
+				ctx.drawImage(frames, 0, 540, 400, 180, 480, 80+i*100, 300, 100);
 			}
 		}
 
-		ctx.drawImage(frames[0], 0, 0,w/2,h/2);
-		ctx.drawImage(frames[1], w/2, h/2,w/2,h/2);
+		ctx.drawImage(deco1, 0, 0,w/2,h/2);
+		ctx.drawImage(deco2, w/2, h/2,w/2,h/2);
 
 		ctx.font= 'bold 35px HG明朝E';
 		ctx.strokeStyle = '#333';
@@ -1535,7 +1502,7 @@
 		ctx.strokeText('依　頼',576,345,510);
 		ctx.fillText('依　頼',576,345);
 
-		ctx.drawImage(frames[10],570,390,120,50);
+		ctx.drawImage(frames, 400, 472, 200, 200,570,390,120,50);
 		ctx.font= 'bold 25px HG明朝E';
 		ctx.strokeStyle = '#333';
 		ctx.fillStyle = '#edf';
@@ -1571,26 +1538,26 @@
 		appStatus();
 
 		//成果物プレート
-		ctx.drawImage(frames[10],270,70,178,40);
+		ctx.drawImage(frames, 400, 472, 200, 200,270,70,178,40);
 		//拡張
 		if(key_achieve>2){
 			ctx.font= 'bold 25px HG明朝E';
 			ctx.fillStyle = '#fff';
 			if(key_pos!=0){
-				ctx.drawImage(frames[10],240,70,20,40);
+				ctx.drawImage(frames, 400, 472, 200, 200,240,70,20,40);
 				ctx.fillText('《',230,99);
 			}
 			if(key_pos!=4){
-				ctx.drawImage(frames[10],457,70,20,40);
+				ctx.drawImage(frames, 400, 472, 200, 200,457,70,20,40);
 				ctx.fillText('》',461,99);
 			}
 		}
 		
 		//成果物枠
-		ctx.drawImage(frames[9],240-  4,120,74,75);
-		ctx.drawImage(frames[9],240+ 81,120,74,75);
-		ctx.drawImage(frames[9],240+166,120,74,75);
-		ctx.drawImage(frames[10],240,210,235,210);
+		ctx.drawImage(frames, 400, 272, 200, 200,240-  4,120,74,75);
+		ctx.drawImage(frames, 400, 272, 200, 200,240+ 81,120,74,75);
+		ctx.drawImage(frames, 400, 272, 200, 200,240+166,120,74,75);
+		ctx.drawImage(frames, 400, 472, 200, 200,240,210,235,210);
 		ctx.fillStyle = '#ec9';
 		ctx.fillRect(240,124,65,65);
 		ctx.fillRect(240+ 85,124,65,65);
@@ -1602,9 +1569,16 @@
 		ctx.fillRect(240+ 85,124,1,65);
 		ctx.fillRect(240+170,124,65,1);
 		ctx.fillRect(240+170,124,1,65);
-		if(key_item[0+key_pos]==0)ctx.drawImage(icons[32+key_ability[key_pos]],241,125,64,64);
-		if(key_item[1+key_pos]==0)ctx.drawImage(icons[32+key_ability[key_pos+1]],241+ 85,125,64,64);
-		if(key_item[2+key_pos]==0)ctx.drawImage(icons[32+key_ability[key_pos+2]],241+170,125,64,64);
+		var inum1 = 25+key_ability[key_pos];
+		var inum2 = 25+key_ability[key_pos+1];
+		var inum3 = 25+key_ability[key_pos+2];
+
+		if(key_item[0+key_pos]==0)
+			ctx.drawImage(icons, (inum1%6)*64, Math.floor(inum1/6)*64, 64, 64,241,125,64,64);
+		if(key_item[1+key_pos]==0)
+			ctx.drawImage(icons, (inum2%6)*64, Math.floor(inum2/6)*64, 64, 64,241+ 85,125,64,64);
+		if(key_item[2+key_pos]==0)
+			ctx.drawImage(icons, (inum3%6)*64, Math.floor(inum3/6)*64, 64, 64,241+170,125,64,64);
 
 		ctx.font= 'bold 20px HG明朝E';
 		ctx.lineWidth = 4;
@@ -1621,12 +1595,12 @@
 
 		if(drag==1){
 			ctx.strokeStyle = '#666';
-			ctx.drawImage(icons[28],278,223,164,164);
-			ctx.drawImage(icons[29],275,220,164,164);
+			ctx.drawImage(icons, 128, 448, 128, 128,278,223,164,164);//drink
+			ctx.drawImage(icons, 256, 448, 128, 128,275,220,164,164);//drink
 		}else{
 			ctx.strokeStyle = '#333';
-			ctx.drawImage(icons[28],278,223,164,164);
-			ctx.drawImage(icons[27],275,220,164,164);
+			ctx.drawImage(icons, 128, 448, 128, 128,278,223,164,164);//drink
+			ctx.drawImage(icons,   0, 448, 128, 128,275,220,164,164);//drink
 		}
 		ctx.font= 'bold 20px HG明朝E';
 		t = 'エナドリの所持数：'+have_taima;
@@ -1647,18 +1621,21 @@
 		requestId = window.requestAnimationFrame(renderMain); 
 	}
 	function renderExplore(){
-		ctx.drawImage(images[0], 0, 0, w, h);
-		if(on_drag && happy>720)ctx.drawImage(images[0], -(cnt[22]+cnt[21])/4, -(cnt[22]+cnt[21])/4, w + (cnt[22]+cnt[21])/2, h + (cnt[22]+cnt[21])/2);
-		ctx.drawImage(charDefault, 0, 0);
+		if(on_drag && happy>720){
+			ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, 800, 600, -(cnt[22]+cnt[21])/4, -(cnt[22]+cnt[21])/4, w + (cnt[22]+cnt[21])/2, h + (cnt[22]+cnt[21])/2);
+		}else{
+			ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, 800, 600, 0, 0, w, h);//back
+		}
+		ctx.drawImage(chars, charDefault*225, 0, 225, 600, 0-cnt[99], 0, 225, 600);//chara
 
 		if(20<cnt[2]){ctx.globalAlpha = 1.2-cnt[2]*0.01;}else{ctx.globalAlpha = 1.0;}
-		ctx.drawImage(frames[2], (cnt[2]-20)*4, 0, 400-(cnt[2]-20)*4, 180, 480+(cnt[2]-20)*3,  80, 300-(cnt[2]-20)*3, 100);
-		ctx.drawImage(frames[2], (cnt[2]-10)*4, 0, 400-(cnt[2]-10)*4, 180, 480+(cnt[2]-10)*3, 180, 300-(cnt[2]-10)*3, 100);
-		ctx.drawImage(frames[2], (cnt[2]- 0)*4, 0, 400-(cnt[2]- 0)*4, 180, 480+(cnt[2]- 0)*3, 280, 300-(cnt[2]- 0)*3, 100);
+		ctx.drawImage(frames, (cnt[2]-20)*4, 0, 400-(cnt[2]-20)*4, 180, 480+(cnt[2]-20)*3,  80, 300-(cnt[2]-20)*3, 100);
+		if(cnt[2]<110)ctx.drawImage(frames, (cnt[2]-10)*4, 0, 400-(cnt[2]-10)*4, 180, 480+(cnt[2]-10)*3, 180, 300-(cnt[2]-10)*3, 100);
+		if(cnt[2]<100)ctx.drawImage(frames, (cnt[2]- 0)*4, 0, 400-(cnt[2]- 0)*4, 180, 480+(cnt[2]- 0)*3, 280, 300-(cnt[2]- 0)*3, 100);
 		ctx.globalAlpha = 1.0;
 
-		ctx.drawImage(frames[0], 0, 0,w/2,h/2);
-		ctx.drawImage(frames[1], w/2, h/2,w/2,h/2);
+		ctx.drawImage(deco1, 0, 0,w/2,h/2);
+		ctx.drawImage(deco2, w/2, h/2,w/2,h/2);
 
 		ctx.fillStyle = 'rgb(0,0,0)';
 		ctx.fillRect(0,0,w,cnt[1]*0.6);
@@ -1687,13 +1664,13 @@
 			}
 			while(true){
 				//area:20-75(56)
-				rnd1 = Math.floor(Math.random()*7)+20+exp_area-3+item_eff[6]*2;
-				rnd2 = Math.floor(Math.random()*7)+20+exp_area-3+item_eff[6]*2;
+				rnd1 = Math.floor(Math.random()*7)+exp_area-3+item_eff[6]*2;
+				rnd2 = Math.floor(Math.random()*7)+exp_area-3+item_eff[6]*2;
 				if(rnd1==rnd2)rnd1++;
-				if(rnd1<20 || rnd2<20){rnd1+=4; rnd2+=4;}
-				if(rnd1>75)rnd1-=56;
-				if(rnd2>75)rnd2-=56;
-				if(images[0]!=images[rnd1] && images[0]!=images[rnd2])break;
+				if(rnd1<0 || rnd2<0){rnd1+=4; rnd2+=4;}
+				if(rnd1>55)rnd1-=56;
+				if(rnd2>55)rnd2-=56;
+				if(back!=rnd1 && back!=rnd2)break;
 			}
 			requestId = window.requestAnimationFrame(renderExplore2); 
 		}
@@ -1717,8 +1694,8 @@
 
 		var on = 0;
 		ctx.font= 'bold 25px HG明朝E';
-		var select1 = field_name[rnd1-20];
-		var select2 = field_name[rnd2-20];
+		var select1 = field_name[rnd1];
+		var select2 = field_name[rnd2];
 		if(on_mouse_exp == 1){on = 2;}else{on = 0;}
 		ctx.strokeText(select1,290-on,360-on+10-cnt[6],510);
 		ctx.fillText(select1,290-on,360-on+10-cnt[6]);
@@ -1734,9 +1711,9 @@
 
 		ctx.fillStyle = '#000';
 		if(on_mouse_exp == 1){on = 2;}else{on = 0;}
-		ctx.drawImage(images[rnd1],245-on,165-on+10-cnt[6],230,160,245-on,165-on+10-cnt[6],230,160);
+		ctx.drawImage(fields, (rnd1%10)*800, Math.floor(rnd1/10)*600,800,600, 245-on,165-on+10-cnt[6],230,160);
 		if(on_mouse_exp == 2){on = 2;}else{on = 0;}
-		ctx.drawImage(images[rnd2],515-on,165-on+10-cnt[6],230,160,515-on,165-on+10-cnt[6],230,160);
+		ctx.drawImage(fields, (rnd2%10)*800, Math.floor(rnd2/10)*600,800,600, 515-on,165-on+10-cnt[6],230,160);
 
 		ctx.globalAlpha = 1.0;
 
@@ -1759,8 +1736,8 @@
 
 		var on = 0;
 		ctx.font= 'bold 25px HG明朝E';
-		var select1 = field_name[rnd1-20];
-		var select2 = field_name[rnd2-20];
+		var select1 = field_name[rnd1];
+		var select2 = field_name[rnd2];
 		if(on_mouse_exp == 1){on = 2;}else{on = 0;}
 		ctx.strokeText(select1,290-on,360-on,510);
 		ctx.fillText(select1,290-on,360-on);
@@ -1771,21 +1748,21 @@
 		ctx.fillStyle = '#fff';
 		ctx.fillRect(240-on,160-on,240,170);
 		ctx.fillRect(510-on,160-on,240,170);
-		ctx.drawImage(images[rnd1],245-on,165-on,230,160,245-on,165-on,230,160);
-		ctx.drawImage(images[rnd2],515-on,165-on,230,160,515-on,165-on,230,160);
+		ctx.drawImage(fields, (rnd1%10)*800, Math.floor(rnd1/10)*600,800,600, 245-on,165-on,230,160);
+		ctx.drawImage(fields, (rnd2%10)*800, Math.floor(rnd2/10)*600,800,600, 515-on,165-on,230,160);
 		ctx.globalAlpha = 1.0;
 
 		ctx.globalAlpha = 0.01*cnt[4];
 		if(on_mouse_exp == 1){
-			ctx.drawImage(images[rnd1],0,0,w,h);
+			ctx.drawImage(fields, (rnd1%10)*800, Math.floor(rnd1/10)*600, 800, 600, 0, 0, w, h);//back
 		}else{
-			ctx.drawImage(images[rnd2],0,0,w,h);
+			ctx.drawImage(fields, (rnd2%10)*800, Math.floor(rnd2/10)*600, 800, 600, 0, 0, w, h);//back
 		}
 		ctx.globalAlpha = 1.0;
 
-		ctx.drawImage(charDefault, 0, 0);
-		ctx.drawImage(frames[0], 0, 0,w/2,h/2);
-		ctx.drawImage(frames[1], w/2, h/2,w/2,h/2);
+		ctx.drawImage(chars, charDefault*225, 0, 225, 600, 0, 0, 225, 600);//chara
+		ctx.drawImage(deco1, 0, 0,w/2,h/2);
+		ctx.drawImage(deco2, w/2, h/2,w/2,h/2);
 		ctx.fillStyle = '#000';
 		ctx.fillRect(0,0,w,60);
 		ctx.fillRect(0,530,w,h);
@@ -1799,13 +1776,13 @@
 			for(var i = 0; i<15; i++)exp_str[i] = '';
 			var dis = 0;
 			if(on_mouse_exp == 1){
-				images[0] = images[rnd1];
-				dis = Math.abs(exp_area - (rnd1-20));
-				exp_area = rnd1-20;
+				back = rnd1;
+				dis = Math.abs(exp_area - rnd1);
+				exp_area = rnd1;
 			}else{
-				images[0] = images[rnd2];
-				dis = Math.abs(exp_area - (rnd2-20));
-				exp_area = rnd2-20;
+				back = rnd2;
+				dis = Math.abs(exp_area - rnd2);
+				exp_area = rnd2;
 			}
 			cnt[4]=0;
 			cnt[5]=0;
@@ -1835,8 +1812,8 @@
 
 		if(!click_wait){
 		ctx.globalAlpha = 0.01*cnt[4];
-		ctx.drawImage(frames[9],0,50,200,100, 280,60,420,470);
-		ctx.drawImage(frames[12],295,60,388,470);
+		ctx.drawImage(frames, 400, 322, 200, 100, 280,60,420,470);
+		ctx.drawImage(fields, 7200, 3000, 800, 600,295,60,388,470);//paper
 		ctx.fillStyle = '#864';
 		ctx.fillRect(295,60,1,470);
 		ctx.fillRect(682,60,1,470);
@@ -1848,19 +1825,17 @@
 				var str = field_name[exp_area].replace(/\s+/g, '' );
 				exp_str[0] = str+'にやってきた。';
 			}
-			//if(cnt[5]<1000){
-				if(exp_act==exp_act_num){
+			if(exp_act==exp_act_num){
+				exp_act++;
+				exp_status=-1;
+				for(var i = 14; i>0; i--)exp_str[i] = exp_str[i-1];
+				exp_str[0] = '疲れたから、もう帰る。';
+			}else if(exp_act<exp_act_num){
+				if(cnt[5]==40*exp_act){
 					exp_act++;
-					exp_status=-1;
-					for(var i = 14; i>0; i--)exp_str[i] = exp_str[i-1];
-					exp_str[0] = '疲れたから、もう帰る。';
-				}else if(exp_act<exp_act_num){
-					if(cnt[5]==40*exp_act){
-						exp_act++;
-						questEvent();
-					}
+					questEvent();
 				}
-			//}
+			}
 		}
 		if(cnt[5]<40*exp_act)cnt[5]++;
 
@@ -1992,18 +1967,18 @@
 
 	function renderAlchemy(){
 
-		ctx.drawImage(images[0], 0, 0, w, h);
-		if(on_drag && happy>720)ctx.drawImage(images[0], -(cnt[22]+cnt[21])/4, -(cnt[22]+cnt[21])/4, w + (cnt[22]+cnt[21])/2, h + (cnt[22]+cnt[21])/2);
-		ctx.drawImage(charDefault, 0, 0);
+		ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, 800, 600, 0, 0, w, h);//back
+		if(on_drag && happy>720)ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, -(cnt[22]+cnt[21])/4, -(cnt[22]+cnt[21])/4, w + (cnt[22]+cnt[21])/2, h + (cnt[22]+cnt[21])/2);
+		ctx.drawImage(chars, charDefault*225, 0, 225, 600, 0, 0, 225, 600);//chara
 
 		if(20<cnt[2]){ctx.globalAlpha = 1.2-cnt[2]*0.01;}else{ctx.globalAlpha = 1.0;}
-		ctx.drawImage(frames[2], (cnt[2]-20)*4, 0, 400-(cnt[2]-20)*4, 180, 480+(cnt[2]-20)*3,  80, 300-(cnt[2]-20)*3, 100);
-		ctx.drawImage(frames[2], (cnt[2]-10)*4, 0, 400-(cnt[2]-10)*4, 180, 480+(cnt[2]-10)*3, 180, 300-(cnt[2]-10)*3, 100);
-		ctx.drawImage(frames[2], (cnt[2]- 0)*4, 0, 400-(cnt[2]- 0)*4, 180, 480+(cnt[2]- 0)*3, 280, 300-(cnt[2]- 0)*3, 100);
+		ctx.drawImage(frames, (cnt[2]-20)*4, 0, 400-(cnt[2]-20)*4, 180, 480+(cnt[2]-20)*3,  80, 300-(cnt[2]-20)*3, 100);
+		if(cnt[2]<110)ctx.drawImage(frames, (cnt[2]-10)*4, 0, 400-(cnt[2]-10)*4, 180, 480+(cnt[2]-10)*3, 180, 300-(cnt[2]-10)*3, 100);
+		if(cnt[2]<100)ctx.drawImage(frames, (cnt[2]- 0)*4, 0, 400-(cnt[2]- 0)*4, 180, 480+(cnt[2]- 0)*3, 280, 300-(cnt[2]- 0)*3, 100);
 		ctx.globalAlpha = 1.0;
 
-		ctx.drawImage(frames[0], 0, 0,w/2,h/2);
-		ctx.drawImage(frames[1], w/2, h/2,w/2,h/2);
+		ctx.drawImage(deco1, 0, 0,w/2,h/2);
+		ctx.drawImage(deco2, w/2, h/2,w/2,h/2);
 
 		ctx.fillStyle = 'rgb(0,0,0)';
 		ctx.fillRect(0,0,w,cnt[1]*0.6);
@@ -2034,13 +2009,13 @@
 		if(cnt[6]<5)ctx.globalAlpha = 0.2*cnt[6];
 		var m = 10-cnt[6];
 
-		ctx.drawImage(frames[9],236,147+m,275,276);
+		ctx.drawImage(frames, 400, 272, 200, 200,236,147+m,275,276);
 
-		ctx.drawImage(frames[9],236,66+m,74,75);
-		ctx.drawImage(frames[9],236+100,66+m,74,75);
-		ctx.drawImage(frames[9],236+200,66+m,74,75);
+		ctx.drawImage(frames, 400, 272, 200, 200,236,66+m,74,75);
+		ctx.drawImage(frames, 400, 272, 200, 200,236+100,66+m,74,75);
+		ctx.drawImage(frames, 400, 272, 200, 200,236+200,66+m,74,75);
 
-		ctx.drawImage(frames[9],554,249+m,183,169);
+		ctx.drawImage(frames, 400, 272, 200, 200,554,249+m,183,169);
 
 		ctx.fillStyle = '#ec9';
 		ctx.fillRect(240,70+m,65,65);
@@ -2058,19 +2033,19 @@
 		ctx.fillRect(560,255+m,170,1);
 
 		if(on_mouse_alc_menu == 0){
-			ctx.drawImage(frames[8], 535, 150+m, 220, 80);
+			ctx.drawImage(frames, 400, 136, 300, 136, 535, 150+m, 220, 80);
 		}else{
-			ctx.drawImage(frames[7], 535, 150+m, 220, 80);
+			ctx.drawImage(frames, 400, 0, 300, 136, 535, 150+m, 220, 80);
 		}
 		if(on_mouse_alc_menu == 1){
-			ctx.drawImage(frames[8], 260, 435+m, 220, 80);
+			ctx.drawImage(frames, 400, 136, 300, 136, 260, 435+m, 220, 80);
 		}else{
-			ctx.drawImage(frames[7], 260, 435+m, 220, 80);
+			ctx.drawImage(frames, 400, 0, 300, 136, 260, 435+m, 220, 80);
 		}
 		if(on_mouse_alc_menu == 2){
-			ctx.drawImage(frames[8], 500, 435+m, 220, 80);
+			ctx.drawImage(frames, 400, 136, 300, 136, 500, 435+m, 220, 80);
 		}else{
-			ctx.drawImage(frames[7], 500, 435+m, 220, 80);
+			ctx.drawImage(frames, 400, 0, 300, 136, 500, 435+m, 220, 80);
 		}
 
 		ctx.font= 'bold 28px HG明朝E';
@@ -2089,7 +2064,7 @@
 		for(var i = 0; i<3; i++){
 			var num = alc_item[i];
 			if(num!=-1){
-				ctx.drawImage(icons[num], 244+i*100,74+m,57,57);
+				ctx.drawImage(icons, (num%6)*64, Math.floor(num/6)*64, 64, 64, 244+i*100,74+m,57,57);
 				ctx.font= 'bold 25px HG明朝E';
 				ctx.strokeStyle = '#333';
 				ctx.fillStyle = '#fff';
@@ -2119,7 +2094,7 @@
 			}
 			if(item_stack_once[tar] != 0){
 				name = item[tar];
-				ctx.drawImage(icons[tar], 565,260+m,64,64);
+				ctx.drawImage(icons, (tar%6)*64, Math.floor(tar/6)*64, 64, 64, 565,260+m,64,64);
 		
 				ctx.font= 'bold 15px HG明朝E';
 				ctx.strokeText('売値:'+tar*3+'G',648,325+m,510);
@@ -2134,7 +2109,7 @@
 
 			}else{
 				name = '未確認';
-				ctx.drawImage(icons[25], 565,260+m,64,64);
+				ctx.drawImage(icons, 192,　384, 64, 64, 565,260+m,64,64);
 			}
 			ctx.font= 'bold 22px HG明朝E';
 			ctx.strokeText(name,630+(100-22*name.length)/2,300+m,510);
@@ -2145,8 +2120,8 @@
 
 		if(-1<alc_item[3] && alc_item[3]<14){
 			if(cnt[30]>0)ctx.globalAlpha = 1-0.1*cnt[30];
-			//ctx.drawImage(icons[32+alc_item[3]], 597,267+m+cnt[30],100,100);
-			ctx.drawImage(icons[32+alc_item[3]], 595,265+m+cnt[30],100,100);
+			var inum = 25+alc_item[3];
+			ctx.drawImage(icons, (inum%6)*64, Math.floor(inum/6)*64, 64, 64, 595,265+m+cnt[30],100,100);
 			ctx.font= 'bold 22px HG明朝E';
 			ctx.strokeStyle = '#333';
 			ctx.fillStyle = '#fff';
@@ -2156,8 +2131,8 @@
 			ctx.globalAlpha = 1.0;
 		}else if(alc_item[3] == 99){
 			if(cnt[30]>0)ctx.globalAlpha = 1-0.1*cnt[30];
-			ctx.drawImage(icons[28], 597,267+m+cnt[30],100,100);
-			ctx.drawImage(icons[27], 595,265+m+cnt[30],100,100);
+			ctx.drawImage(icons, 128, 448, 128, 128, 597,267+m+cnt[30],100,100);
+			ctx.drawImage(icons,   0, 448, 128, 128, 595,265+m+cnt[30],100,100);
 			ctx.font= 'bold 22px HG明朝E';
 			ctx.strokeStyle = '#333';
 			ctx.fillStyle = '#fff';
@@ -2175,13 +2150,12 @@
 				if(on_mouse_alc == i*5+j)on = 1;
 				ctx.fillRect(244+j*52-on,154+i*52-on+m,48,48);
 				if(item_stack_once[i*5+j]!=0){
-					//ctx.drawImage(icons[i*5+j], 244+j*52-on, 154+i*52-on+m, 48, 48);
-					ctx.drawImage(frames[10], 244+j*52-on, 154+i*52-on+m, 48, 48);
-					ctx.drawImage(icons[i*5+j], 244+j*52-on, 154+i*52-on+m, 48, 48);
+					ctx.drawImage(frames, 400, 472, 200, 200, 244+j*52-on, 154+i*52-on+m, 48, 48);
+					var inum = i*5+j;
+					ctx.drawImage(icons, (inum%6)*64, Math.floor(inum/6)*64, 64, 64, 244+j*52-on, 154+i*52-on+m, 48, 48);
 				}else{
-					//ctx.drawImage(icons[0], 244+j*52-on, 154+i*52-on+m, 48, 48);
-					ctx.drawImage(frames[10], 244+j*52-on, 154+i*52-on+m, 48, 48);
-					ctx.drawImage(icons[25], 244+j*52-on, 154+i*52-on+m, 48, 48);
+					ctx.drawImage(frames, 400, 472, 200, 200, 244+j*52-on, 154+i*52-on+m, 48, 48);
+					ctx.drawImage(icons, 192, 384, 64, 64, 244+j*52-on, 154+i*52-on+m, 48, 48);
 				}
 				if(on_click_alc == i*5+j){
 					
@@ -2219,18 +2193,18 @@
 	}
 
 	function renderQuest(){
-		ctx.drawImage(images[0], 0, 0, w, h);
-		if(on_drag && happy>720)ctx.drawImage(images[0], -(cnt[22]+cnt[21])/4, -(cnt[22]+cnt[21])/4, w + (cnt[22]+cnt[21])/2, h + (cnt[22]+cnt[21])/2);
-		ctx.drawImage(charDefault, 0, 0);
+		ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, 800, 600, 0, 0, w, h);//back
+		if(on_drag && happy>720)ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, -(cnt[22]+cnt[21])/4, -(cnt[22]+cnt[21])/4, w + (cnt[22]+cnt[21])/2, h + (cnt[22]+cnt[21])/2);
+		ctx.drawImage(chars, charDefault*225, 0, 225, 600, 0, 0, 225, 600);//chara
 
 		if(20<cnt[2]){ctx.globalAlpha = 1.2-cnt[2]*0.01;}else{ctx.globalAlpha = 1.0;}
-		ctx.drawImage(frames[2], (cnt[2]-20)*4, 0, 400-(cnt[2]-20)*4, 180, 480+(cnt[2]-20)*3,  80, 300-(cnt[2]-20)*3, 100);
-		ctx.drawImage(frames[2], (cnt[2]-10)*4, 0, 400-(cnt[2]-10)*4, 180, 480+(cnt[2]-10)*3, 180, 300-(cnt[2]-10)*3, 100);
-		ctx.drawImage(frames[2], (cnt[2]- 0)*4, 0, 400-(cnt[2]- 0)*4, 180, 480+(cnt[2]- 0)*3, 280, 300-(cnt[2]- 0)*3, 100);
+		ctx.drawImage(frames, (cnt[2]-20)*4, 0, 400-(cnt[2]-20)*4, 180, 480+(cnt[2]-20)*3,  80, 300-(cnt[2]-20)*3, 100);
+		if(cnt[2]<110)ctx.drawImage(frames, (cnt[2]-10)*4, 0, 400-(cnt[2]-10)*4, 180, 480+(cnt[2]-10)*3, 180, 300-(cnt[2]-10)*3, 100);
+		if(cnt[2]<100)ctx.drawImage(frames, (cnt[2]- 0)*4, 0, 400-(cnt[2]- 0)*4, 180, 480+(cnt[2]- 0)*3, 280, 300-(cnt[2]- 0)*3, 100);
 		ctx.globalAlpha = 1.0;
 
-		ctx.drawImage(frames[0], 0, 0,w/2,h/2);
-		ctx.drawImage(frames[1], w/2, h/2,w/2,h/2);
+		ctx.drawImage(deco1, 0, 0,w/2,h/2);
+		ctx.drawImage(deco2, w/2, h/2,w/2,h/2);
 
 		ctx.fillStyle = 'rgb(0,0,0)';
 		ctx.fillRect(0,0,w,cnt[1]*0.6);
@@ -2253,13 +2227,12 @@
 		appEffect();
 	}
 	function renderQuest2(){
-		ctx.drawImage(images[0], 0, 0, w, h);
-		if(on_drag && happy>720)ctx.drawImage(images[0], -(cnt[22]+cnt[21])/4, -(cnt[22]+cnt[21])/4, w + (cnt[22]+cnt[21])/2, h + (cnt[22]+cnt[21])/2);
-		ctx.drawImage(charDefault, 0, 0);
-		ctx.drawImage(frames[0], 0, 0,w/2,h/2);
-		ctx.drawImage(frames[1], w/2, h/2,w/2,h/2);
-		ctx.drawImage(images[76],800-3*cnt[5],100);
-		//ctx.drawImage(images[2],880-3*cnt[5],0);
+		ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, 800, 600, 0, 0, w, h);//back
+		if(on_drag && happy>720)ctx.drawImage(fields, (back%10)*800, Math.floor(back/10)*600, -(cnt[22]+cnt[21])/4, -(cnt[22]+cnt[21])/4, w + (cnt[22]+cnt[21])/2, h + (cnt[22]+cnt[21])/2);
+		ctx.drawImage(chars, charDefault*225, 0, 225, 600, 0, 0, 225, 600);//chara
+		ctx.drawImage(deco1, 0, 0,w/2,h/2);
+		ctx.drawImage(deco2, w/2, h/2,w/2,h/2);
+		ctx.drawImage(chars, 2025, 0, 265, 600,800-3*cnt[5],100,265,600);
 		ctx.fillStyle = '#000';
 		ctx.fillRect(0,0,w,60);
 		ctx.fillRect(0,530,w,h);
@@ -2270,11 +2243,11 @@
 			if(cnt[7]<10){
 				cnt[7]++;
 				ctx.globalAlpha = 0.1*cnt[7];
-				ctx.drawImage(frames[11],550-3*cnt[5],100+10-cnt[7],300,220);
+				ctx.drawImage(pop,550-3*cnt[5],100+10-cnt[7],300,220);
 				ctx.globalAlpha = 1.0;
 			}else{
 				if(cnt[7]<20)cnt[7]++;
-				ctx.drawImage(frames[11],550-3*cnt[5],100,300,220);
+				ctx.drawImage(pop,550-3*cnt[5],100,300,220);
 			}
 		if(cnt[7]==20){
 			ctx.font= 'bold 30px HG明朝E';
@@ -2286,7 +2259,7 @@
 					if(key_achieve<2 && quest_num>18){
 						ctx.fillText('依頼は無いよ',610-3*cnt[5],205+10-cnt[6]);
 					}else{
-						ctx.drawImage(icons[quest_item],580-3*cnt[5],130+10-cnt[6],64,64);
+						ctx.drawImage(icons, (quest_item%6)*64, Math.floor(quest_item/6)*64, 64, 64,580-3*cnt[5],130+10-cnt[6],64,64);
 						ctx.fillText('を '+quest_sum+' 個',670-3*cnt[5],180+10-cnt[6]);
 						ctx.fillText('持ってきて下さい',580-3*cnt[5],230+10-cnt[6]);
 					}
@@ -2295,7 +2268,7 @@
 					if(key_achieve<2 && quest_num>18){
 						ctx.fillText('依頼は無いよ',610-3*cnt[5],205);
 					}else{
-						ctx.drawImage(icons[quest_item],580-3*cnt[5],130,64,64);
+						ctx.drawImage(icons, (quest_item%6)*64, Math.floor(quest_item/6)*64, 64, 64,580-3*cnt[5],130,64,64);
 						ctx.fillText('を '+quest_sum+' 個',670-3*cnt[5],180);
 						ctx.fillText('持ってきて下さい',580-3*cnt[5],230);
 					}
@@ -2342,19 +2315,21 @@
 						ctx.globalAlpha = 0.1*(cnt[6]-50);
 						if(quest_num<44 && unknown){
 							ctx.fillText('key'+num+'は',610-3*cnt[5],180+60-cnt[6]);
-							ctx.drawImage(icons[key_item_recipe[num1][num2]],720-3*cnt[5],130+60-cnt[6],64,64);
+							var inum = key_item_recipe[num1][num2];
+							ctx.drawImage(icons, (inum%6)*64, Math.floor(inum/6)*64, 64, 64,720-3*cnt[5],130+60-cnt[6],64,64);
 						}else{
 							ctx.fillText('お礼は',610-3*cnt[5],180+60-cnt[6]);
-							ctx.drawImage(icons[20],720-3*cnt[5],130+60-cnt[6],64,64);
+							ctx.drawImage(icons, 128, 192, 64, 64,720-3*cnt[5],130+60-cnt[6],64,64);//box
 						}
 						ctx.globalAlpha = 1.0;
 					}else{
 						if(quest_num<44 && unknown){
 							ctx.fillText('key'+num+'は',610-3*cnt[5],180);
-							ctx.drawImage(icons[key_item_recipe[num1][num2]],720-3*cnt[5],130,64,64);
+							var inum = key_item_recipe[num1][num2];
+							ctx.drawImage(icons, (inum%6)*64, Math.floor(inum/6)*64, 64, 64,720-3*cnt[5],130,64,64);
 						}else{
 							ctx.fillText('お礼は',610-3*cnt[5],180+60-cnt[6]);
-							ctx.drawImage(icons[20],720-3*cnt[5],130+60-cnt[6],64,64);
+							ctx.drawImage(icons, 128, 192, 64, 64,720-3*cnt[5],130+60-cnt[6],64,64);//box
 						}
 					}
 				}
@@ -2364,14 +2339,14 @@
 
 		if(cnt[5]==100){
 			if(on_mouse_quest == 0){
-				ctx.drawImage(frames[8], 220, 435, 170, 80);
+				ctx.drawImage(frames, 400, 136, 300, 136, 220, 435, 170, 80);
 			}else{
-				ctx.drawImage(frames[7], 220, 435, 170, 80);
+				ctx.drawImage(frames, 400, 0, 300, 136, 220, 435, 170, 80);
 			}
 			if(on_mouse_quest == 1){
-				ctx.drawImage(frames[8], 410, 435, 170, 80);
+				ctx.drawImage(frames, 400, 136, 300, 136, 410, 435, 170, 80);
 			}else{
-				ctx.drawImage(frames[7], 410, 435, 170, 80);
+				ctx.drawImage(frames, 400, 0, 300, 136, 410, 435, 170, 80);
 			}
 			ctx.font= 'bold 28px HG明朝E';
 			ctx.fillStyle = '#edf';
@@ -2385,9 +2360,9 @@
 			if(ability_have[7]!=-1){
 				if(key_item[ability_have[7]]!=-1){
 					if(on_mouse_quest == 2){
-						ctx.drawImage(frames[8], 305, 345, 190, 80);
+						ctx.drawImage(frames,400, 136, 300, 136, 305, 345, 190, 80);
 					}else{
-						ctx.drawImage(frames[7], 305, 345, 190, 80);
+						ctx.drawImage(frames,400, 0, 300, 136, 305, 345, 190, 80);
 					}
 					if(on_mouse_quest==2){ctx.strokeStyle = '#666';}else{ctx.strokeStyle = '#333';}
 					ctx.strokeText('金で解決',342, 394, 510);
@@ -2408,8 +2383,6 @@
 		appStatus();
 		dragEffect();
 		if(ending_num==5){
-			//audio_def.playbackRate = 0.96;
-			//audio_def.loop = false;
 			if(music_next!=12)audioChange(12);
 			if(cnt[20]==0 && !status.match(/イカサマ/))status = "真実の錬金術士";
 			if(ending_num==5 && exp_area==55 && !status.match(/イカサマ/))status = "地方上級錬金術士";
@@ -2511,7 +2484,7 @@
 			window.cancelAnimationFrame(requestId);
 			if(ending_num==5){
 				for(var i = 0; i<5; i++){	
-					end_pict[i] = i+20;
+					end_pict[i] = i;
 					end_y[i] = 600+i*160;
 				}
 				if(status.match(/イカサマ/))status = "周回の錬金術士";
@@ -2539,13 +2512,13 @@
 				end_pict[i]+=5;
 				end_y[i]=-160+160*5;
 			}else{
-				if(end_pict[i]<76){
-					ctx.drawImage(images[end_pict[i]],80,end_y[i],260,150);
+				if(end_pict[i]<56){
+					ctx.drawImage(fields, (end_pict[i]%10)*800, Math.floor(end_pict[i]/10)*600, 800, 600,80,end_y[i],260,150);
 					end_y[i]--;
 				}
 			}
 		}
-		ctx.drawImage(images[1],380,-10,390,320);
+		ctx.drawImage(logo,380,-10,390,320);
 		ctx.fillStyle = '#fff';
 		var str = [];
 		str.push(' 企画制作  discoNeko');
@@ -2559,7 +2532,8 @@
 			if(c<350)cnt[62]++;
 			if(c>900)cnt[62]--;
 			ctx.globalAlpha = 0.01*cnt[62];
-			ctx.drawImage(ends[Math.floor(cnt[61]/1000)],410,350,330,230);
+
+			ctx.drawImage(ends,((Math.floor(cnt[61]/1000))%5)*400,0,400,300,410,350,330,230);
 		}
 		
 		if(cnt[61]>9600 && cnt[61]<9701){
@@ -2580,7 +2554,7 @@
 	}
 	function autoMove(){
 		var rnd = Math.floor(Math.random()*9);
-		charDefault = images[rnd+2];
+		charDefault = rnd;
 	}
 	function onClickSE(n){
 		if(!music_mute && music_play==0){
@@ -2634,11 +2608,11 @@
 
 		if(phase!=77777){
 		if(40<x && x<200 && 100<y && y<500){
-			charDefault = images[2];
+			charDefault = 0;
 		}
 		if(70<x && x<180 && 90<y && y<150){
 			onClickSE(3);
-			charDefault = images[9];
+			charDefault = 7;
 			pon++;
 			if(pon>20){
 			key_achieve=7;
@@ -2648,13 +2622,13 @@
 		}
 		if(90<x && x<180 && 300<y && y<370){
 			onClickSE(22);
-			charDefault = images[8];
+			charDefault = 6;
 			if(!status.match(/イカサマ/))status = "セクハラ錬金術士";
 		}
 		if(phase==0){
 			if(50<x && x<200 && 555<y && y<600){
 				onClickSE(22);
-				charDefault = images[6];
+				charDefault = 4;
 				cnt[99]=12;
 				status = "セクハラ錬金術士";
 			}
@@ -2755,7 +2729,7 @@
 			//エナドリ使用
 			if(240<x && x<475 && 210<y && y<420){
 				if(have_taima>0){
-					if(!status.match(/イカサマ/))status = "エナドリの錬金術士";
+					if(!status.match(/イカサマ/))status = "エナドリ錬金術士";
 					on_drag = true;
 
 					var time = Math.floor(20*(1-0.01*use_taima));
@@ -2770,16 +2744,16 @@
 						if(key_item[ability_have[13]]!=-1){use_taima-=3;if(use_taima<0)use_taima=0;}
 					}
 					happy+=100;
-					var rnd = Math.floor(Math.random()*9);
-					charDefault = images[rnd+2];
+					var rnd = Math.floor(Math.random()*8);
+					charDefault = rnd;
 					
 					if(music_play==0){
-					music_play++;
-					audio_drag.pause();
-					//audio_drag.loop = true;
-					audio_drag.src = "bgm/d.mp3";
-					audio_drag.currentTime = 72.5;
-					audio_drag.play();
+						music_play++;
+						audio_drag.pause();
+						//audio_drag.loop = true;
+						audio_drag.src = "bgm/d.mp3";
+						audio_drag.currentTime = 72.5;
+						audio_drag.play();
 					}
 				}
 			}
@@ -3121,13 +3095,13 @@
 				if(240<x && x<475 && 210<y && y<420){
 					if(drag==0){
 						drag = 1;
-						charDefault = images[4];
+						charDefault = 2;
 					}
 					on_mouse_help = '不思議なエナドリ：飲むと気持ち良くなる不思議なエナドリ【総数：'+cnt_taima+'】';
 				}else{
 					if(drag==1){
 						drag = 0;
-						charDefault = images[2];
+						charDefault = 0;
 					}
 				}
 			}
