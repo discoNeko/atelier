@@ -1,0 +1,68 @@
+﻿<html>
+<head>
+<title>絵奈鳥のアトリエ</title>
+</head>
+<link rel='stylesheet' href='style.css' />
+<body align="center" bgcolor="#999" style="font-family: 'Meiryo'">
+<p style="margin-top:1.5em;">
+<canvas id="canvas" width='800' height='600'></canvas>
+<script src='atelier.js'></script>
+</p>
+<p>
+<div>
+<a href="#" class="btn sample11" onclick="tips(1); return false;">絵奈鳥とは</a>
+<a href="#" class="btn sample11" onclick="tips(2); return false;">世界観</a>
+<a href="#" class="btn sample11" onclick="tips(3); return false;">ゲーム操作</a>
+<a href="#" class="btn sample11" onclick="tips(4); return false;">使用素材</a>
+</div>
+</p>
+<div id="tips">
+</div>
+<script>
+function tips(n){
+if(n==1){
+document.getElementById("tips").innerHTML= "" + "<img src=\"./img/tips"+n+".png\" width=\"580\" height=\"480\" border=\"0\" alt=\"\">"
+}else if(n==2){
+document.getElementById("tips").innerHTML= "" + "<img src=\"./img/tips"+n+".png\" width=\"515\" height=\"645\" border=\"0\" alt=\"\">"
+}else if(n==3){
+document.getElementById("tips").innerHTML= "" + "<img src=\"./img/tips"+n+".png\" width=\"580\" height=\"480\" border=\"0\" alt=\"\">"
+}else{
+document.getElementById("tips").innerHTML= "<span style=\"line-height:1.4;\">"+
+"<img src=\"./img/title1.png\" width=\"580\" height=\"480\" border=\"0\" alt=\"\"><br><br>"+
+"<br>【 画像 】"+
+"<br><a href=\"http://mypage.syosetu.com/mypage/top/userid/632962/\" target=\"_blank\">光煌晃</a>"+
+"<br><a href=\"http://www.pixiv.net/member_illust.php?mode=medium&illust_id=44340969\" target=\"_blank\">胡蝶</a>"+
+"<br><a href=\"http://www.pixiv.net/member_illust.php?mode=medium&illust_id=22858635\" target=\"_blank\">七重</a>"+
+"<br><a href=\"http://www.pixiv.net/member_illust.php?mode=medium&illust_id=44210693\" target=\"_blank\">ヨシュケイ</a>"+
+"<br><a href=\"https://pixabay.com/ja/users/johny_deff-1611501/\" target=\"_blank\">johny_deff</a>"+
+"<br><a href=\"http://tokudaya.net/index.html\" target=\"_blank\">とくだ屋</a>"+
+"<br><a href=\"http://hibana.rgr.jp/\" target=\"_blank\">フリー素材 * ヒバナ</a>"+
+"<br><a href=\"http://ja.best-wallpaper.net/\" target=\"_blank\">BEST WALLPAPER</a>"+
+"<br><a href=\"http://icooon-mono.com/\" target=\"_blank\">ICOOON MONO</a>"+
+"<br><a href=\"http://kage-design.com/wp/\" target=\"_blank\">シルエットデザイン</a>"+
+"<br><a href=\"http://www.pref.miyagi.jp/site/kenseidayori/kenseidayoribacknumber200604201203.html\" target=\"_blank\">みやぎ県政だより(2010年12月号)「薬物、ダメゼッタイ」</a>"+
+
+"<br><br>【 音楽 】"+
+"<br><a href=\"http://commons.nicovideo.jp/material/nc80345\" target=\"_blank\">「星へ」ju-nya</a>"+
+"<br><a href=\"http://commons.nicovideo.jp/material/nc49298\" target=\"_blank\">「Stream D」ju-nya</a>"+
+"<br><a href=\"http://commons.nicovideo.jp/material/nc120575\" target=\"_blank\">「Gentle White」ju-nya</a>"+
+"<br><a href=\"http://commons.nicovideo.jp/material/nc120477\" target=\"_blank\">「5 Beats Strings」ju-nya</a>"+
+"<br><a href=\"http://commons.nicovideo.jp/material/nc83843\" target=\"_blank\">「BGM002」うたたP</a>"+
+"<br><a href=\"http://commons.nicovideo.jp/material/nc19441\" target=\"_blank\">「E-sphere」しましまP</a>"+
+"<br><a href=\"http://commons.nicovideo.jp/material/nc72095\" target=\"_blank\">「エルフの弓」こおろぎ</a>"+
+"<br><a href=\"http://commons.nicovideo.jp/material/nc81984\" target=\"_blank\">「魔導への対峙」こおろぎ</a>"+
+"<br><a href=\"http://commons.nicovideo.jp/material/nc74823\" target=\"_blank\">「未確認神核仮想カタストロフ」こおろぎ</a>"+
+"<br><a href=\"http://commons.nicovideo.jp/material/nc21139\" target=\"_blank\">「真夜中の路地裏」ChinoRi侯爵</a>"+
+"<br><a href=\"http://www.hmix.net/music_gallery/list/list_n.htm\" target=\"_blank\">「One's believes」秋山裕和</a>"+
+"<br><a href=\"http://www.hmix.net/music_gallery/list/list_n.htm\" target=\"_blank\">「Moment」秋山裕和</a>"+
+"<br><a href=\"https://soundcloud.com/marc-manzanares\" target=\"_blank\">Marc Manzanares</a>"+
+
+"<br><br>【 効果音 】"+
+"<br><a href=\"http://www.kurage-kosho.info/\" target=\"_blank\">くらげ工匠</a>"+
+"<br><a href=\"http://taira-komori.jpn.org/index.html\" target=\"_blank\">無料効果音で遊ぼう！</a></span>"
+}
+}
+</script><p>
+<div>Copyright(c) 2015 - 2016 <a href="https://github.com/discoNeko">discoNeko</a>.</div></p>
+</body>
+</html>
