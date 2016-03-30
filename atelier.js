@@ -2842,9 +2842,9 @@
 				if(cnt[20]==0){
 				var area;
 				if(on_mouse_exp == 1){
-					area = rnd1-20;
+					area = rnd1;
 				}else{
-					area = rnd2-20;
+					area = rnd2;
 				}
 				if(area<7){
 					if(music_next!=2 && music_next!=3)audioChange(2);
