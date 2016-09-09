@@ -1,3 +1,8 @@
+// ==ClosureCompiler==
+// @output_file_name default.js
+// @compilation_level SIMPLE_OPTIMIZATIONS
+// ==/ClosureCompiler==
+
 (function() {
 	var w = 800, h = 600;
 	var cnt = [];
@@ -2105,11 +2110,11 @@
 				ctx.strokeText(item_help[tar][1],565,380+m,510);
 				ctx.fillText(item_help[tar][1],565,380+m);
 				ctx.strokeText(item_help[tar][2],565,400+m,510);
-				ctx.fillText(item_help[tar][2],565,400+m);	
+				ctx.fillText(item_help[tar][2],565,400+m);
 
 			}else{
 				name = '未確認';
-				ctx.drawImage(icons, 192,　384, 64, 64, 565,260+m,64,64);
+				ctx.drawImage(icons, 192, 384, 64, 64, 565,260+m,64,64);
 			}
 			ctx.font= 'bold 22px HG明朝E';
 			ctx.strokeText(name,630+(100-22*name.length)/2,300+m,510);
@@ -3074,7 +3079,7 @@
 		var x =  Math.round(e.clientX - rect.left);
 		var y =  Math.round(e.clientY - rect.top);
 		//console.log(x+" "+y);
-		on_mouse_help =　'';
+		on_mouse_help = '';
 
 		if(phase == 0){
 			on_mouse_title = -1;
