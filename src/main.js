@@ -1,9 +1,26 @@
-// ==ClosureCompiler==
-// @output_file_name default.js
-// @compilation_level SIMPLE_OPTIMIZATIONS
-// ==/ClosureCompiler==
+/*
+	main.js
+
+	TODO: 画像の遅延読み込みを実装する(jQuery) discoNeko 2016-09-09
+*/
 
 (function() {
+
+/* Menu */
+
+	$('.btn').click(function(){
+		OpenTips($(this).attr('id'));
+	});
+
+	function OpenTips(target){
+		for(var i = 1; i < 6; i++){
+			$('#tips'+i).css('display', 'none');
+		}
+		$('#tips'+target.substr(4)).css('display', 'block');
+	};
+
+/* Canvas */
+
 	var w = 800, h = 600;
 	var cnt = [];
 	var phase = 0;
@@ -47,11 +64,11 @@
 	var click_wait = false;
 	var click_wait2 = false;
 	var click_wait3 = false;
-	var quest_conv = 0;
-	var quest_chance = 0;
-	var cnt_taima = 0;
-	var have_taima = 0;
-	var use_taima = 0;
+	var quest_conversation = 0;
+	var gather_chance = 0;
+	var cnt_drink = 0;
+	var have_drink = 0;
+	var use_drink = 0;
 	var heal_now = false;
 	var heal_price = 100;
 	var ending_num;
@@ -98,6 +115,7 @@
 	var audio_drag = new Audio();
 	var audio_def = new Audio();
 	var audio_se = new Audio();
+		// MEMO: BGM対応ファイル名
 		//  1 : nc80345
 		//  2 : nc19441
 		//  3 : nc120477
@@ -273,11 +291,11 @@
 		exp_area = 0;
 		exp_drag = -1;
 		exp_status = -1;
-		quest_conv = 0;
-		quest_chance = 0;
-		cnt_taima = 0;
-		have_taima = 0;
-		use_taima = 0;
+		quest_conversation = 0;
+		gather_chance = 0;
+		cnt_drink = 0;
+		have_drink = 0;
+		use_drink = 0;
 		heal_price = 100;
 		music_play = 0;
 		music_next = 0;
@@ -401,8 +419,8 @@
 		requestId = window.requestAnimationFrame(renderStory); 
 	}
 
-	function questEvent(){
-		if(happy>200-use_taima)happy-=use_taima;
+	function exploreEvent(){
+		if(happy>200-use_drink)happy-=use_drink;
 		var num = Math.floor(Math.random()*20);
 		var time = num/2+3;
 		if(ability_have[12]!=-1){
@@ -569,8 +587,8 @@
 		if(item_eff[6]==1 && num==1){
 			num=6;
 		}
-		if(quest_chance>0 && num<8+quest_chance*2){
-			quest_chance = 0;
+		if(gather_chance>0 && num<8+gather_chance*2){
+			gather_chance = 0;
 			num = 0;
 		}
 		for(var i = 14; i>0; i--)exp_str[i] = exp_str[i-1];
@@ -623,7 +641,7 @@
 			exp_status = 100;
 			break;
 		case  4 : 
-			quest_chance++;
+			gather_chance++;
 			exp_str[0] = '素材の気配がする……。';
 			break;
 		case  5 : 
@@ -737,7 +755,7 @@
 			}
 			break;
 		case 10 : 
-			quest_chance++;
+			gather_chance++;
 			if(exp_area==0 || exp_area==3 || exp_area==5){
 				onClickSE(8);
 				var g = Math.floor(Math.random()*70+30);
@@ -754,7 +772,7 @@
 			}
 			break;
 		case 11 : 
-			quest_chance++;
+			gather_chance++;
 			if(11<exp_area && exp_area<17){
 				onClickSE(18);
 				exp_str[0] = '澄んだ湧水を見つけた。';
@@ -773,7 +791,7 @@
 			}
 			break;
 		case 12 : 
-			quest_chance++;
+			gather_chance++;
 			if(exp_area==17 || exp_area==18 || exp_area==19){
 				onClickSE(18);
 				exp_str[0] = '天然の塩を見つけた。';
@@ -792,7 +810,7 @@
 			}
 			break;
 		case 13 : 
-			quest_chance++;
+			gather_chance++;
 			if(exp_area==8){
 				onClickSE(18);
 				exp_str[0] = 'きのこが生えている。';
@@ -822,7 +840,7 @@
 			}
 			break;
 		case 14 : 
-			quest_chance++;
+			gather_chance++;
 			if(exp_area==29){
 				onClickSE(12);
 				var n = Math.floor(Math.random()*45);
@@ -841,7 +859,7 @@
 				}
 			}
 			break;
-		case 15 : quest_chance++;
+		case 15 : gather_chance++;
 			if(happy<201){
 				exp_str[0] = '何も無かった。';
 			}else{
@@ -850,7 +868,7 @@
 				exp_str[0] = 'ほのかな幸せを感じた。';
 			}
 			break;
-		case 16 :quest_chance++;
+		case 16 :gather_chance++;
 			if(happy<201){
 				exp_str[0] = '何も無かった。';
 			}else{
@@ -859,7 +877,7 @@
 				exp_str[0] = 'ほのかな幸せを感じた。';
 			}
 			break;
-		case 17 : quest_chance++;
+		case 17 : gather_chance++;
 			if(happy<201){
 				exp_str[0] = '何も無かった。';
 			}else{
@@ -868,7 +886,7 @@
 				exp_str[0] = 'ほのかな幸せを感じた。';
 			}
 			break;
-		case 18 : quest_chance++;
+		case 18 : gather_chance++;
 			if(happy<201){
 				exp_str[0] = '何も無かった。';
 			}else{
@@ -884,7 +902,7 @@
 				score += 10;
 				exp_str[0] = item[quest_item]+'を手に入れた。';
 			}else{
-				quest_chance++;
+				gather_chance++;
 				if(happy<201){
 					exp_str[0] = '何も無かった。';
 				}else{
@@ -930,7 +948,7 @@
 			if(item_stack[i]>0)item_stack_once[i] = 1;
 		}
 	}
-	function poly(){
+	function itemPoly(){
 		var check = false;
 		if(alc_item[0]!=-1)check = true;
 		if(alc_item[1]!=-1)check = true;
@@ -976,9 +994,9 @@
 			}
 			if(other){
 				alc_item[3] = 99;
-				if(alc_item[0]!=-1){cnt_taima++;have_taima++;}
-				if(alc_item[1]!=-1){cnt_taima++;have_taima++;}
-				if(alc_item[2]!=-1){cnt_taima++;have_taima++;}
+				if(alc_item[0]!=-1){cnt_drink++;have_drink++;}
+				if(alc_item[1]!=-1){cnt_drink++;have_drink++;}
+				if(alc_item[2]!=-1){cnt_drink++;have_drink++;}
 			}
 
 			//所持アイテム処理
@@ -997,7 +1015,7 @@
 			onClickSE(4);
 		}
 	}
-	function use(){
+	function itemUse(){
 		if(on_click_alc!=-1){
 			if(item_stack[on_click_alc]>0){
 				onClickSE(7);
@@ -1197,7 +1215,7 @@
 		}else if(ability_have[9]!=-1){
 			if(key_item[ability_have[9]]!=-1 && hp<20)cnt[92]-=4;
 		}
-		if(happy>200)cnt[92]-=use_taima;
+		if(happy>200)cnt[92]-=use_drink;
 		if(cnt[92]<-1)cnt[92]=0;
 		if(cnt[92]>0){requestAnimationFrame(modTime);} 
 	}
@@ -1402,7 +1420,7 @@
 			partyEffect();
 			dragEffect();
 		}
-		if(use_taima==100){
+		if(use_drink==100){
 			phase = 77777;
 			ending_num = 2;
 			window.cancelAnimationFrame(requestId);
@@ -1413,7 +1431,7 @@
 		audio_drag.volume = 0.007*cnt[20];
 		if(cnt[20]<30){audio_def.volume = 0.3-0.01*cnt[20];}else{audio_def.volume = 0;}
 		ctx.globalAlpha = 0.01*cnt[20];
-		ctx.drawImage(hand, 0, 350-cnt[21]+cnt[22]-use_taima*3);//hand
+		ctx.drawImage(hand, 0, 350-cnt[21]+cnt[22]-use_drink*3);//hand
 		
 		if(cnt[21]<100){
 			cnt[21]+=20;
@@ -1431,8 +1449,8 @@
 		}
 		ctx.globalAlpha = 0.01*cnt[20];
 		
-		if(use_taima<90){
-			ctx.globalAlpha = (0.1+0.01*use_taima)*0.01*cnt[20];
+		if(use_drink<90){
+			ctx.globalAlpha = (0.1+0.01*use_drink)*0.01*cnt[20];
 		}	
 		ctx.fillStyle = '#000'
 		ctx.fillRect(0,0,800,600);
@@ -1608,7 +1626,7 @@
 			ctx.drawImage(icons,   0, 448, 128, 128,275,220,164,164);//drink
 		}
 		ctx.font= 'bold 20px HG明朝E';
-		t = 'エナドリの所持数：'+have_taima;
+		t = 'エナドリの所持数：'+have_drink;
 		ctx.strokeText(t,270-(t.length-8)*4,405,510);
 		ctx.fillText(t,270-(t.length-8)*4,405);
 
@@ -1838,7 +1856,7 @@
 			}else if(exp_act<exp_act_num){
 				if(cnt[5]==40*exp_act){
 					exp_act++;
-					questEvent();
+					exploreEvent();
 				}
 			}
 		}
@@ -2257,7 +2275,7 @@
 		if(cnt[7]==20){
 			ctx.font= 'bold 30px HG明朝E';
 			ctx.fillStyle = '#000';
-			if(quest_conv==0){
+			if(quest_conversation==0){
 				if(cnt[6]<10){
 					cnt[6]++;
 					ctx.globalAlpha = 0.1*cnt[6];
@@ -2278,7 +2296,7 @@
 						ctx.fillText('持ってきて下さい',580-3*cnt[5],230);
 					}
 				}
-			}else if(quest_conv==1){
+			}else if(quest_conversation==1){
 				if(cnt[6]<10){
 					cnt[6]++;
 					ctx.globalAlpha = 0.1*cnt[6];
@@ -2288,7 +2306,7 @@
 					ctx.fillText('足りないよ！',610-3*cnt[5],180);
 				}
 
-			}else if(quest_conv==2){
+			}else if(quest_conversation==2){
 				if(cnt[6]<50){
 					cnt[6]++;
 					if(cnt[6]<10){
@@ -2733,20 +2751,20 @@
 			}
 			//エナドリ使用
 			if(240<x && x<475 && 210<y && y<420){
-				if(have_taima>0){
+				if(have_drink>0){
 					if(!status.match(/イカサマ/))status = "エナドリ錬金術士";
 					on_drag = true;
 
-					var time = Math.floor(20*(1-0.01*use_taima));
+					var time = Math.floor(20*(1-0.01*use_drink));
 					if(ability_have[12]!=-1){
 						if(key_item[ability_have[12]]!=-1)time*=1.2;
 					}
 					cnt[92]+=time;
 					modTime();
-					have_taima--;
-					use_taima++;
+					have_drink--;
+					use_drink++;
 					if(ability_have[13]!=-1){
-						if(key_item[ability_have[13]]!=-1){use_taima-=3;if(use_taima<0)use_taima=0;}
+						if(key_item[ability_have[13]]!=-1){use_drink-=3;if(use_drink<0)use_drink=0;}
 					}
 					happy+=100;
 					var rnd = Math.floor(Math.random()*8);
@@ -2894,11 +2912,11 @@
 	if(535<x && x<755 && 150<y && y<230){
 				on_mouse_alc = -1;
 				on_click_alc = -1;
-				poly();
+				itemPoly();
 				on_void = false;
 			}
 			if(260<x && x<480 && 435<y && y<515){
-				use();
+				itemUse();
 				var i_cnt = 0;
 				for(var i = 0; i<3; i++){
 					if(alc_item[i] == on_click_alc)i_cnt++;
@@ -2990,10 +3008,10 @@
 				window.cancelAnimationFrame(requestId);
 				renderMain();
 			}
-			if(quest_conv==1){quest_conv = 0;cnt[6] = 0;}
+			if(quest_conversation==1){quest_conversation = 0;cnt[6] = 0;}
 			if((0<x && x<800 && 0<y && y<60) || (0<x && x<800 && 520<y && y<600)){
 				phase = 2;
-				quest_conv = 0;
+				quest_conversation = 0;
 				cnt[2] = 0;
 				cnt[5] = 0;
 				cnt[6] = 0;
@@ -3003,41 +3021,41 @@
 				renderMain();
 			}
 			if(cnt[5]==100){
-			if(quest_conv<2 && 220<x && x<390 && 435<y && y<515){
+			if(quest_conversation<2 && 220<x && x<390 && 435<y && y<515){
 				cnt[6] = 0;
 				if(key_achieve<2 && quest_num>18){
 					onClickSE(4);
 				}else{
 					if(item_stack[quest_item]>quest_sum-1){
 						onClickSE(3);
-						quest_conv=2;
+						quest_conversation=2;
 						item_stack[quest_item] -= quest_sum;
 						quest_num++;
 					}else{
 						onClickSE(4);
-						quest_conv=1;
+						quest_conversation=1;
 					}
 				}
 			}
-			if(quest_conv<2 && 305<x && x<495 && 345<y && y<425){
+			if(quest_conversation<2 && 305<x && x<495 && 345<y && y<425){
 				if(ability_have[7]!=-1){
 					if(key_item[ability_have[7]]!=-1){
 						cnt[6] = 0;
 						if(gold>quest_item*100*quest_sum-1){
 							onClickSE(3);
-							quest_conv=2;
+							quest_conversation=2;
 							gold -= quest_item*100*quest_sum;
 							quest_num++;
 						}else{
 							onClickSE(4);
-							quest_conv=1;
+							quest_conversation=1;
 						}
 					}
 				}
 			}
 			if(410<x && x<580 && 435<y && y<515){
 				phase = 2;
-				quest_conv = 0;
+				quest_conversation = 0;
 				cnt[2] = 0;
 				cnt[5] = 0;
 				cnt[6] = 0;
@@ -3102,7 +3120,7 @@
 						drag = 1;
 						charDefault = 2;
 					}
-					on_mouse_help = '不思議なエナドリ：飲むと気持ち良くなる不思議なエナドリ【総数：'+cnt_taima+'】';
+					on_mouse_help = '不思議なエナドリ：飲むと気持ち良くなる不思議なエナドリ【総数：'+cnt_drink+'】';
 				}else{
 					if(drag==1){
 						drag = 0;
